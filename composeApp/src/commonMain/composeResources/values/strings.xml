@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string name="app_name">Eggy</string>
+
+    <string name="common_continue">Continue</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+    <string name="common_back">Back</string>
+    <string name="common_soft_boiled_eggs">Soft Boiled Eggs</string>
+    <string name="common_medium_boiled_eggs">Medium Boiled Eggs</string>
+    <string name="common_hard_boiled_eggs">Hard Boiled Eggs</string>
+
+    <string name="welcome_button_continue">Let's cook!</string>
+    <string name="welcome_title_3">as you like!</string>
+    <string name="welcome_title_2">Cook\neggs</string>
+    <string name="welcome_title_1">EGGY</string>
+
+    <string name="settings_temp_title"><![CDATA[Egg <b>temperature</b>]]></string>
+    <string name="settings_temp_room_title">Room</string>
+    <string name="settings_temp_fridge_title">Fridge</string>
+    <string name="settings_temp_subtitle">temperature</string>
+
+    <string name="settings_size_title"><![CDATA[Egg <b>size</b>]]></string>
+    <string name="settings_size_s">S</string>
+    <string name="settings_size_m">M</string>
+    <string name="settings_size_l">L</string>
+
+    <string name="settings_type_title"><![CDATA[Egg <b>boiled type</b>]]></string>
+    <string name="settings_type_soft_title">Soft</string>
+    <string name="settings_type_medium_title">Medium</string>
+    <string name="settings_type_hard_title">Hard</string>
+    <string name="settings_type_subtitle">boiled</string>
+    <string name="setup_header_title"><![CDATA[Set <b>boiling details</b>]]></string>
+    <string name="setup_header_subtitle">Prepare eggs as you like!</string>
+    <string name="setup_timer_title">Boil Time for Your Eggs:</string>
+
+    <string name="progress_tips_title">Boiling tips</string>
+    <string name="progress_tip_1">After cooking, let the eggs rest in an ice-bath to \"shock\" them</string>
+    <string name="progress_button_start">Start</string>
+    <string name="progress_button_stop">Stop</string>
+    <string name="progress_boiled_time">Boiled time</string>
+    <string name="progress_boiled_temperature">Water temperature</string>
+    <string name="progress_cancelation_dialog_title">Cancel Boiling?</string>
+    <string name="progress_cancelation_dialog_subtitle">Are you sure you want to stop boiling the eggs?</string>
+    <string name="progress_rationale_dialog_title">Allow Notifications for Perfectly Boiled Eggs</string>
+    <string name="progress_rationale_dialog_subtitle">To ensure perfectly boiled eggs, we need to send you notifications when your eggs are ready. Please enable notifications for the best results.</string>
+    <string name="progress_rationale_dialog_allow">Allow</string>
+    <string name="progress_rationale_dialog_go_to_settings">Open Settings</string>
+
+    <string name="notification_progress_message">Time left: %1$s</string>
+    <string name="notificaton_progress_channel_progress_title">Progress Alerts</string>
+    <string name="notificaton_finish_channel_progress_title">Timer Alerts</string>
+    <string name="notificaton_progress_channel_progress_description">Stay updated with the progress of your boiling eggs to achieve the perfect cook.</string>
+    <string name="notificaton_finish_channel_progress_description">Receive alerts when your eggs are perfectly boiled and ready to enjoy.</string>
+    <string name="notificaton_progress_action_cancel">Cancel</string>
+    <string name="notificaton_progress_finish_message">Eggs are ready to be served. Bon appétit!</string>
+</resources>
