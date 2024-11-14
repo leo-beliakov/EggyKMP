@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
 import com.leoapps.base_ui.utils.annotatedStringResource
@@ -36,6 +38,7 @@ import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.Primary
 import com.leoapps.eggy.base.ui.theme.White
 import com.leoapps.eggy.base.ui.theme.dimens
+import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.BoilSetupViewModel
 import com.leoapps.setup.presentation.composables.CounterComposable
 import com.leoapps.setup.presentation.composables.IconedSelectionButton
@@ -63,7 +66,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BoilSetupScreen(
-    viewModel: BoilSetupViewModel,
+    viewModel: BoilSetupViewModel = viewModel { BoilSetupViewModel(CalculateBoilingTimeUseCase()) }, //todo fix this with DI
     onContinueClicked: (type: EggBoilingType, time: Long) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -305,8 +308,8 @@ private fun TimerSection(
 @Composable
 private fun BoilSetupScreenPreview() {
     EggyTheme {
-//        BoilSetupScreen(
-//            onContinueClicked = { _, _ -> }
-//        )
+        BoilSetupScreen(
+            onContinueClicked = { _, _ -> }
+        )
     }
 }
