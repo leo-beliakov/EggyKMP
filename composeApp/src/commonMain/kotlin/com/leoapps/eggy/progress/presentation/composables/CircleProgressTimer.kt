@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.toIntSize
@@ -33,6 +32,8 @@ import com.leoapps.eggy.base.ui.theme.White
 import com.leoapps.eggy.base.utils.EMPTY_CALCULATED_TIME
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.timer_background
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.imageResource
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -78,7 +79,7 @@ fun CircleTimer(
     state: TimerState = rememberTimerState(),
     modifier: Modifier = Modifier,
 ) {
-    val bitmapBackground = ImageBitmap.imageResource(Res.drawable.timer_background)
+    val bitmapBackground = imageResource(Res.drawable.timer_background)
     val textMeasurer = rememberTextMeasurer()
     val textStyle = MaterialTheme.typography.headlineLarge
 

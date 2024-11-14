@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +27,7 @@ object BoilSetupScreenDestination
 
 @Serializable
 data class BoilProgressScreenDestination(
-    val type: EggBoilingType,
+    val type: String,
     val calculatedTime: Long,
 )
 
@@ -70,7 +71,7 @@ fun RootScreen() {
                 onContinueClicked = { type, time ->
                     navController.navigate(
                         BoilProgressScreenDestination(
-                            type = type,
+                            type = type.toString(),
                             calculatedTime = time,
                         )
                     ) {
@@ -92,9 +93,8 @@ fun RootScreen() {
                     animationSpec = slideAnimationSpec
                 )
             }
-        ) {
+        ) { backStackEntry ->
             BoilProgressScreen(
-                viewModel = BoilProgressViewModel(SavedStateHandle()),
                 onBackClicked = {
                     navController.navigateUp()
                 }

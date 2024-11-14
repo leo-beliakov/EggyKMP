@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
 import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.GraySuperLight
@@ -72,7 +73,7 @@ data class BoilProgressScreenDestination(
 
 @Composable
 fun BoilProgressScreen(
-    viewModel: BoilProgressViewModel,
+    viewModel: BoilProgressViewModel = viewModel(),
     onBackClicked: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
