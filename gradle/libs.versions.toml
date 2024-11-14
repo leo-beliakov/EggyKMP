@@ -17,6 +17,7 @@ runtimeAndroid = "1.7.5"
 compose-constraintlayout = "0.4.0"
 navigation = "2.8.0-alpha10"
 serialization = "1.7.3"
+uiAndroid = "1.7.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -34,6 +35,7 @@ androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime
 compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "compose-multiplatform" }
 compose-constraint-layout = { group = "tech.annexflow.compose", name = "constraintlayout-compose-multiplatform", version.ref = "compose-constraintlayout" }
 navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 
 
 [plugins]
