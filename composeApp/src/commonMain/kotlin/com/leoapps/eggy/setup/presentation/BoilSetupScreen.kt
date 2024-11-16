@@ -45,6 +45,7 @@ import com.leoapps.setup.presentation.model.BoilSetupUiState
 import com.leoapps.setup.presentation.model.EggBoilingTypeUi
 import com.leoapps.setup.presentation.model.EggSizeUi
 import com.leoapps.setup.presentation.model.EggTemperatureUi
+import com.leoapps.vibration.presentation.LocalVibrationManager
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_continue
 import eggy.composeapp.generated.resources.ic_next
@@ -261,7 +262,7 @@ private fun TimerSection(
     nextButtonEnabled: Boolean,
     onNextClicked: () -> Unit
 ) {
-//    val vibratorManager = LocalVibrationManager.current
+    val vibratorManager = LocalVibrationManager.current
 
     Row {
         Column(
@@ -282,7 +283,7 @@ private fun TimerSection(
             contentPadding = PaddingValues(),
             colors = ButtonDefaults.buttonColors(containerColor = Primary),
             onClick = {
-//                vibratorManager.vibrateOnClick()
+                vibratorManager.vibrateOnClick()
                 onNextClicked()
             },
             elevation = ButtonDefaults.elevatedButtonElevation(

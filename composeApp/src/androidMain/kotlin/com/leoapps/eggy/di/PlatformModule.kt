@@ -11,7 +11,4 @@ import org.koin.dsl.module
 
 actual val platformModule = module {
     singleOf(::VibrationManagerImpl).bind(VibrationManager::class)
-
-    viewModelOf(::BoilSetupViewModel)
-    viewModelOf(::BoilProgressViewModel)
 }

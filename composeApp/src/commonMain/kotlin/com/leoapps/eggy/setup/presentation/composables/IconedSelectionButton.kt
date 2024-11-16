@@ -26,6 +26,7 @@ import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.Primary
 import com.leoapps.eggy.base.ui.theme.PrimaryLight
 import com.leoapps.eggy.base.ui.theme.dimens
+import com.leoapps.vibration.presentation.LocalVibrationManager
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.egg_soft
 import eggy.composeapp.generated.resources.settings_size_l
@@ -44,7 +45,7 @@ fun IconedSelectionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-//    val vibratorManager = LocalVibrationManager.current
+    val vibratorManager = LocalVibrationManager.current
     val selectionColor = remember(selected) { if (selected) Primary else GrayLight }
 
     Box(modifier = modifier) {
@@ -66,7 +67,7 @@ fun IconedSelectionButton(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = ripple(color = PrimaryLight),
                     onValueChange = {
-//                        vibratorManager.vibrateOnClick()
+                        vibratorManager.vibrateOnClick()
                         onClick()
                     }
                 )

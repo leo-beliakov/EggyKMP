@@ -24,6 +24,7 @@ import com.leoapps.eggy.base.ui.theme.EggyTheme
 import com.leoapps.eggy.base.ui.theme.Primary
 import com.leoapps.eggy.base.ui.theme.White
 import com.leoapps.eggy.base.ui.theme.dimens
+import com.leoapps.vibration.presentation.LocalVibrationManager
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.welcome_button_continue
 import eggy.composeapp.generated.resources.welcome_egg
@@ -38,7 +39,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun WelcomeScreen(
     onContinueClicked: () -> Unit
 ) {
-//    val vibratorManager = LocalVibrationManager.current
+    val vibratorManager = LocalVibrationManager.current
 
     ConstraintLayout(
         modifier = Modifier
@@ -91,7 +92,7 @@ fun WelcomeScreen(
         )
         ElevatedButton(
             onClick = {
-//                vibratorManager.vibrateOnClick()
+                vibratorManager.vibrateOnClick()
                 onContinueClicked()
             },
             shape = RoundedCornerShape(MaterialTheme.dimens.cornerM),

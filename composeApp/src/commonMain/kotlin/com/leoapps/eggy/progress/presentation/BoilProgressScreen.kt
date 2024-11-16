@@ -50,6 +50,7 @@ import com.leoapps.progress.presentation.composables.TimerState
 import com.leoapps.progress.presentation.composables.rememberTimerState
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
+import com.leoapps.vibration.presentation.LocalVibrationManager
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_back
 import eggy.composeapp.generated.resources.ic_back
@@ -362,11 +363,11 @@ private fun ButtonStartSection(
     buttonState: ActionButtonState,
     onButtonClicked: () -> Unit,
 ) {
-//    val vibratorManager = LocalVibrationManager.current
+    val vibratorManager = LocalVibrationManager.current
 
     ElevatedButton(
         onClick = {
-//            vibratorManager.vibrateOnClick()
+            vibratorManager.vibrateOnClick()
             onButtonClicked()
         },
         shape = RoundedCornerShape(MaterialTheme.dimens.cornerM),
