@@ -10,6 +10,7 @@ import com.leoapps.eggy.base.permissions.model.PermissionStatus
 import com.leoapps.eggy.base.utils.convertMsToTimerText
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
+import com.leoapps.eggy.vibration.domain.VibrationManager
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
 import eggy.composeapp.generated.resources.Res
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 @Stable // https://issuetracker.google.com/issues/280284177
 class BoilProgressViewModel (
 //    @ApplicationContext private val context: Context,
-//    private val vibrationManager: VibrationManager,
+    private val vibrationManager: VibrationManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -185,9 +186,9 @@ class BoilProgressViewModel (
 //                finishCelebrationConfig = getCelebrationConfig()
             )
         }
-//        vibrationManager.vibratePattern(
-//            pattern = TIMER_FINISH_VIBRARTION_PATTERN
-//        )
+        vibrationManager.vibratePattern(
+            pattern = TIMER_FINISH_VIBRARTION_PATTERN
+        )
     }
 
     private fun onTimerProgressUpdate(timerState: TimerStatusUpdate.Progress) {
