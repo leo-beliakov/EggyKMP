@@ -17,6 +17,7 @@ compose-constraintlayout = "0.4.0"
 navigation = "2.8.0-alpha10"
 serialization = "1.7.3"
 uiAndroid = "1.7.5"
+koin = "4.0.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -35,7 +36,11 @@ compose-material3 = { group = "org.jetbrains.compose.material3", name = "materia
 compose-constraint-layout = { group = "tech.annexflow.compose", name = "constraintlayout-compose-multiplatform", version.ref = "compose-constraintlayout" }
 navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
-
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -63,6 +63,7 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 data class BoilProgressScreenDestination(
@@ -73,7 +74,7 @@ data class BoilProgressScreenDestination(
 
 @Composable
 fun BoilProgressScreen(
-    viewModel: BoilProgressViewModel = viewModel(),
+    viewModel: BoilProgressViewModel = koinViewModel(),
     onBackClicked: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

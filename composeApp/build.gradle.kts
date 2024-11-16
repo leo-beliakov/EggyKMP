@@ -34,19 +34,31 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            //Koin
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            //Compose
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.kotlin.serialization)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.constraint.layout)
+
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.compose.constraint.layout)
-            implementation(libs.compose.material3)
+
+            //Navigation
             implementation(libs.navigation.compose)
+            implementation(libs.kotlin.serialization)
+
+            //Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
         }
     }
 }
