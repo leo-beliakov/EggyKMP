@@ -8,7 +8,7 @@ import android.os.VibratorManager
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 
 
-class VibrationManagerImpl(
+class VibrationManagerAndroidImpl(
     val context: Context
 ) : VibrationManager {
 

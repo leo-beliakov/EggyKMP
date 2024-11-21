@@ -7,17 +7,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
 import com.leoapps.eggy.welcome.presentation.BoilSetupScreen
 import com.leoapps.eggy.welcome.presentation.WelcomeScreen
 import com.leoapps.progress.presentation.BoilProgressScreen
-import com.leoapps.progress.presentation.BoilProgressViewModel
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 object WelcomeScreenDestination
@@ -34,8 +34,24 @@ data class BoilProgressScreenDestination(
 private const val NAVIGATION_ANIM_DURATION = 400
 
 @Composable
-fun RootScreen() {
+fun RootScreen(
+    viewModel: RootViewModel = koinViewModel()
+) {
     val navController = rememberNavController()
+
+    RootScreen(
+        navController = navController,
+    )
+
+    CollectEventsWithLifecycle(viewModel.navCommands) { command ->
+
+    }
+}
+
+@Composable
+private fun RootScreen(
+    navController: NavHostController
+) {
     val fadeAnimationSpec = tween<Float>(
         durationMillis = NAVIGATION_ANIM_DURATION,
         easing = LinearEasing
