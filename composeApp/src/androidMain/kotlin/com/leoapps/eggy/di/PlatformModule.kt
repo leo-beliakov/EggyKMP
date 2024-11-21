@@ -1,7 +1,7 @@
 package com.leoapps.eggy.di
 
-import com.leoapps.eggy.vibration.VibrationManagerImpl
-import com.leoapps.eggy.vibration.domain.VibrationManager
+import com.leoapps.eggy.common.vibration.VibrationManagerImpl
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.progress.presentation.BoilProgressViewModel
 import com.leoapps.setup.presentation.BoilSetupViewModel
 import org.koin.core.module.dsl.singleOf

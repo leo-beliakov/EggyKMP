@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.leoapps.eggy.base.utils.EMPTY_CALCULATED_TIME
+import com.leoapps.eggy.common.utils.EMPTY_CALCULATED_TIME
 
 @Composable
 fun CounterComposable(

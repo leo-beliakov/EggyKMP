@@ -29,7 +29,7 @@ import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.Primary
 import com.leoapps.eggy.base.ui.theme.PrimaryAlmostWhite
 import com.leoapps.eggy.base.ui.theme.White
-import com.leoapps.eggy.base.utils.EMPTY_CALCULATED_TIME
+import com.leoapps.eggy.common.utils.EMPTY_CALCULATED_TIME
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.timer_background
 import org.jetbrains.compose.resources.DrawableResource

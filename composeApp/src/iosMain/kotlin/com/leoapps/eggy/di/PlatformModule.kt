@@ -1,7 +1,7 @@
 package com.leoapps.eggy.di
 
-import com.leoapps.eggy.vibration.domain.VibrationManager
-import com.leoapps.eggy.vibrator.VibrationManagerIosImpl
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.common.vibrator.VibrationManagerIosImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

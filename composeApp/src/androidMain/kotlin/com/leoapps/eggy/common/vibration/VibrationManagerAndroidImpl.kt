@@ -1,11 +1,11 @@
-package com.leoapps.eggy.vibration
+package com.leoapps.eggy.common.vibration
 
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import com.leoapps.eggy.vibration.domain.VibrationManager
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
 
 
 class VibrationManagerImpl(

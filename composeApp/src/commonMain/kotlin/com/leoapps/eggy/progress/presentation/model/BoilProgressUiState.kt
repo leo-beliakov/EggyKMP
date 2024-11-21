@@ -1,6 +1,6 @@
 package com.leoapps.eggy.setup.presentation.model
 
-import com.leoapps.eggy.base.utils.EMPTY_CALCULATED_TIME
+import com.leoapps.eggy.common.utils.EMPTY_CALCULATED_TIME
 import com.leoapps.progress.presentation.model.ActionButtonState
 import org.jetbrains.compose.resources.StringResource
 

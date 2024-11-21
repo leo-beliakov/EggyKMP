@@ -1,6 +1,6 @@
 package com.leoapps.setup.presentation.model
 
-import com.leoapps.eggy.base.utils.EMPTY_CALCULATED_TIME
+import com.leoapps.eggy.common.utils.EMPTY_CALCULATED_TIME
 
 data class BoilSetupUiState(
     val availableSizes: List<EggSizeUi> = EggSizeUi.entries,

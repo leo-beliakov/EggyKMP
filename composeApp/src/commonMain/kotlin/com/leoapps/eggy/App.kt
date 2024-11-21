@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import com.leoapps.eggy.base.ui.theme.EggyTheme
 import com.leoapps.eggy.root.presentation.RootScreen
-import com.leoapps.eggy.vibration.domain.VibrationManager
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.welcome.presentation.BoilSetupScreen
 import com.leoapps.eggy.welcome.presentation.WelcomeScreen
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase

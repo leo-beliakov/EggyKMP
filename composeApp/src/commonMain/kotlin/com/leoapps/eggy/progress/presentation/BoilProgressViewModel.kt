@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.permissions.model.PermissionStatus
-import com.leoapps.eggy.base.utils.convertMsToTimerText
+import com.leoapps.eggy.common.permissions.model.PermissionStatus
+import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
-import com.leoapps.eggy.vibration.domain.VibrationManager
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
 import eggy.composeapp.generated.resources.Res

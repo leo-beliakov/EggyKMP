@@ -1,4 +1,4 @@
-package com.leoapps.eggy.vibration.domain
+package com.leoapps.eggy.common.vibration.domain
 
 interface VibrationManager {
     fun vibrateOnClick()
