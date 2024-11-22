@@ -1,10 +1,12 @@
 package com.leoapps.eggy.progress.domain.model
 
+import com.leoapps.base.egg.domain.model.EggBoilingType
+
 sealed interface TimerStatusUpdate {
-    object Idle : TimerStatusUpdate
     object Finished : TimerStatusUpdate
     object Canceled : TimerStatusUpdate
+
     data class Progress(
-        val valueMs: Long
+        val timePassedMs: Long,
     ) : TimerStatusUpdate
 }
