@@ -1,7 +1,7 @@
 package com.leoapps.eggy.di
 
 import com.leoapps.eggy.base.egg.domain.TimerHelper
-import com.leoapps.eggy.base.egg.domain.TimerHelperAndroidImpl
+import com.leoapps.eggy.timer.TimerHelperAndroidImpl
 import com.leoapps.eggy.base.notification.BoilProgressNotificationManager
 import com.leoapps.eggy.base.notification.NotificationChannelsManager
 import com.leoapps.eggy.common.vibration.VibrationManagerAndroidImpl

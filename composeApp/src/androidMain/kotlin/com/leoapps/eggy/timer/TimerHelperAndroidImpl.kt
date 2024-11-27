@@ -1,4 +1,4 @@
-package com.leoapps.eggy.base.egg.domain
+package com.leoapps.eggy.timer
 
 import android.content.ComponentName
 import android.content.Context
@@ -7,8 +7,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.eggy.base.egg.domain.TimerHelper
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
-import com.leoapps.eggy.timer.TimerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
