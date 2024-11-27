@@ -2,7 +2,7 @@ package com.leoapps.eggy.timer
 
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.base.egg.domain.CountDownTimer
-import com.leoapps.eggy.base.egg.domain.TimerHelper
+import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 private const val TIMER_UPDATE_INTERVAL = 200L
 private const val NOTIFICATION_UPDATE_INTERVAL = 1000L
 
-class TimerHelperIosImpl : TimerHelper {
+class TimerManagerIosImpl(
+    private val liveActivityManager: LiveActivityManager
+) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
 
@@ -29,7 +31,7 @@ class TimerHelperIosImpl : TimerHelper {
 
     override fun stopTimer() {
         timer?.cancel()
-        // todo stop live activity
+        liveActivityManager.stopLiveActivity()
     }
 
     override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
@@ -53,6 +55,6 @@ class TimerHelperIosImpl : TimerHelper {
         )
         timer?.start()
 
-        // todo start live activity
+        liveActivityManager.startLiveActivity(boilingTime)
     }
 }

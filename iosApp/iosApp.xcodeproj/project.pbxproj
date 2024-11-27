@@ -61,10 +61,18 @@
 			);
 			target = D8DC20CD2CF0362E00D3E488 /* EggBoilingLiveActivityExtension */;
 		};
+		D8DC214B2CF6DD1600D3E488 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				EggTimerActivityAttributes.swift,
+			);
+			target = D8DC20CD2CF0362E00D3E488 /* EggBoilingLiveActivityExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D8DC20D32CF0362E00D3E488 /* EggBoilingLiveActivity */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8DC20E32CF0363000D3E488 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = EggBoilingLiveActivity; sourceTree = "<group>"; };
+		D8DC214A2CF6DD0800D3E488 /* liveactivity */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8DC214B2CF6DD1600D3E488 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = liveactivity; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +135,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				D8DC214A2CF6DD0800D3E488 /* liveactivity */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -161,6 +170,9 @@
 			);
 			dependencies = (
 				D8DC20DE2CF0363000D3E488 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D8DC214A2CF6DD0800D3E488 /* liveactivity */,
 			);
 			name = iosApp;
 			packageProductDependencies = (
@@ -352,7 +364,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -409,7 +421,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -433,7 +445,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -460,7 +472,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -491,7 +503,7 @@
 				INFOPLIST_FILE = EggBoilingLiveActivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = EggBoilingLiveActivity;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 orgName. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -526,7 +538,7 @@
 				INFOPLIST_FILE = EggBoilingLiveActivity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = EggBoilingLiveActivity;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 orgName. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

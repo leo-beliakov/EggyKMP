@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.egg.domain.TimerHelper
+import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 @Stable // https://issuetracker.google.com/issues/280284177
 class BoilProgressViewModel(
     private val vibrationManager: VibrationManager,
-    private val timerHelper: TimerHelper,
+    private val timerManager: TimerManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class BoilProgressViewModel(
     private var serviceSubscribtionJob: Job? = null
 
     init {
-        timerHelper.timerUpdates
+        timerManager.timerUpdates
             .onEach { timerState ->
                 when (timerState) {
                     TimerStatusUpdate.Canceled -> onTimerCanceled()
@@ -82,7 +82,7 @@ class BoilProgressViewModel(
     fun onCancelationDialogConfirmed() {
         showDoalog(null)
         viewModelScope.launch { _events.emit(BoilProgressUiEvent.NavigateBack) }
-        timerHelper.stopTimer()
+        timerManager.stopTimer()
     }
 
     fun onCelebrationFinished() {
@@ -94,7 +94,7 @@ class BoilProgressViewModel(
     fun onPermissionResult(result: PermissionStatus) {
         when (result) {
             PermissionStatus.GRANTED -> {
-                timerHelper.startTimer(boilingTime, eggType)
+                timerManager.startTimer(boilingTime, eggType)
                 _state.update { it.copy(buttonState = ActionButtonState.STOP) }
             }
 
@@ -112,7 +112,7 @@ class BoilProgressViewModel(
         when (result) {
             PermissionStatus.GRANTED -> {
                 showDoalog(null)
-                timerHelper.startTimer(boilingTime, eggType)
+                timerManager.startTimer(boilingTime, eggType)
                 _state.update { it.copy(buttonState = ActionButtonState.STOP) }
             }
 
@@ -189,7 +189,7 @@ class BoilProgressViewModel(
     }
 
     private fun onStartClicked() {
-        timerHelper.startTimer(boilingTime, eggType)
+        timerManager.startTimer(boilingTime, eggType)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 //            viewModelScope.launch {
 //                _events.emit(BoilProgressUiEvent.RequestNotificationsPermission)
@@ -200,7 +200,7 @@ class BoilProgressViewModel(
     }
 
     private fun onStopClicked() {
-        timerHelper.stopTimer()
+        timerManager.stopTimer()
         _state.update { it.copy(buttonState = ActionButtonState.START) }
     }
 

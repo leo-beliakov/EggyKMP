@@ -25,7 +25,7 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             isStatic = true
-            baseName = "shared"
+            baseName = "Shared"
             binaryOption("bundleId", "com.leoapps.eggy")
         }
     }

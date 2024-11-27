@@ -7,7 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.egg.domain.TimerHelper
+import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class TimerHelperAndroidImpl(
+class TimerManagerAndroidImpl(
     private val context: Context
-) : TimerHelper {
+) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
 
