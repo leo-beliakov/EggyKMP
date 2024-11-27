@@ -14,6 +14,10 @@ import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
+import dev.icerock.moko.permissions.DeniedAlwaysException
+import dev.icerock.moko.permissions.DeniedException
+import dev.icerock.moko.permissions.Permission
+import dev.icerock.moko.permissions.PermissionsController
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_hard_boiled_eggs
 import eggy.composeapp.generated.resources.common_medium_boiled_eggs
@@ -34,6 +38,8 @@ class BoilProgressViewModel(
     private val timerManager: TimerManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    lateinit var permissionsController: PermissionsController
 
     private val args = savedStateHandle.toRoute<BoilProgressScreenDestination>()
     private val eggType = EggBoilingType.fromString(args.type) ?: EggBoilingType.MEDIUM
@@ -91,23 +97,6 @@ class BoilProgressViewModel(
 //        }
     }
 
-    fun onPermissionResult(result: PermissionStatus) {
-        when (result) {
-            PermissionStatus.GRANTED -> {
-                timerManager.startTimer(boilingTime, eggType)
-                _state.update { it.copy(buttonState = ActionButtonState.STOP) }
-            }
-
-            PermissionStatus.DENIED -> {
-                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
-            }
-
-            PermissionStatus.DONT_ASK_AGAIN -> {
-                showDoalog(BoilProgressUiState.Dialog.RATIONALE_GO_TO_SETTINGS)
-            }
-        }
-    }
-
     fun onPermissionSettingsResult(result: PermissionStatus) {
         when (result) {
             PermissionStatus.GRANTED -> {
@@ -126,9 +115,7 @@ class BoilProgressViewModel(
 
     fun onRationaleDialogConfirm() {
         showDoalog(null)
-        viewModelScope.launch {
-            _events.emit(BoilProgressUiEvent.RequestNotificationsPermission)
-        }
+        requestNotificationsPermission()
     }
 
     fun onGoToSettingsDialogConfirm() {
@@ -178,6 +165,7 @@ class BoilProgressViewModel(
             it.copy(
                 progress = timerState.timePassedMs / boilingTime.toFloat(),
                 progressText = convertMsToTimerText(timerState.timePassedMs),
+                buttonState = ActionButtonState.STOP
             )
         }
     }
@@ -189,19 +177,26 @@ class BoilProgressViewModel(
     }
 
     private fun onStartClicked() {
-        timerManager.startTimer(boilingTime, eggType)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            viewModelScope.launch {
-//                _events.emit(BoilProgressUiEvent.RequestNotificationsPermission)
-//            }
-//        } else {
-//            onPermissionResult(PermissionStatus.GRANTED)
-//        }
+        requestNotificationsPermission()
     }
 
     private fun onStopClicked() {
         timerManager.stopTimer()
-        _state.update { it.copy(buttonState = ActionButtonState.START) }
+    }
+
+    private fun requestNotificationsPermission() {
+        viewModelScope.launch {
+            try {
+                permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
+                timerManager.startTimer(boilingTime, eggType)
+            } catch (e: DeniedAlwaysException) {
+                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
+            } catch (e: DeniedException) {
+                showDoalog(BoilProgressUiState.Dialog.RATIONALE_GO_TO_SETTINGS)
+            } catch (e: Exception) {
+                println("sreverecs")
+            }
+        }
     }
 
 //    private fun getCelebrationConfig(): List<Party> {

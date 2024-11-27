@@ -6,6 +6,7 @@ import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
@@ -58,6 +59,7 @@ class TimerManagerAndroidImpl(
     }
 
     override fun stopTimer() {
+        Log.d("MyTag", "Manager stopTimer")
         binder?.stopTimer()
 //        coroutineScope.cancel() //todo double-check
     }

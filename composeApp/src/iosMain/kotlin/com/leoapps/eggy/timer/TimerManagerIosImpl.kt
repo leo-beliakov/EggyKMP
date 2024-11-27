@@ -32,6 +32,9 @@ class TimerManagerIosImpl(
     override fun stopTimer() {
         timer?.cancel()
         liveActivityManager.stopLiveActivity()
+        coroutineScope.launch {
+            _timerUpdates.emit(TimerStatusUpdate.Canceled)
+        }
     }
 
     override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {

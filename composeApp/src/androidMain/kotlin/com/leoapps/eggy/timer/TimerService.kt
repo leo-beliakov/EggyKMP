@@ -6,12 +6,14 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.core.app.ServiceCompat
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.base.notification.BoilProgressNotificationManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,7 +27,7 @@ class TimerService : Service() {
 
     private val notificationManager: BoilProgressNotificationManager by inject()
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val coroutineScope = CoroutineScope(Job())
 
     private var timer: CountDownTimer? = null
     private val _timerState = MutableSharedFlow<TimerStatusUpdate>()
@@ -121,6 +123,8 @@ class TimerService : Service() {
     }
 
     private fun onStopTimer() {
+        timer?.cancel()
+        coroutineScope.launch { _timerState.emit(TimerStatusUpdate.Canceled) }
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
