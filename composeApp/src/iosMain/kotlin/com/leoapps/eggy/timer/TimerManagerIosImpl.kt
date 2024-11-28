@@ -15,7 +15,8 @@ private const val TIMER_UPDATE_INTERVAL = 200L
 private const val NOTIFICATION_UPDATE_INTERVAL = 1000L
 
 class TimerManagerIosImpl(
-    private val liveActivityManager: LiveActivityManager
+    private val liveActivityManager: LiveActivityManager,
+    private val notificationsManager: NotificationsManager,
 ) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
@@ -31,6 +32,7 @@ class TimerManagerIosImpl(
 
     override fun stopTimer() {
         timer?.cancel()
+        notificationsManager.cancelCompleteNotification()
         liveActivityManager.stopLiveActivity()
         coroutineScope.launch {
             _timerUpdates.emit(TimerStatusUpdate.Canceled)
@@ -38,6 +40,9 @@ class TimerManagerIosImpl(
     }
 
     override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
+        notificationsManager.scheduleCompleteNotification(boilingTime)
+        liveActivityManager.startLiveActivity(boilingTime)
+
         timer = CountDownTimer(
             millisInFuture = boilingTime,
             tickInterval = TIMER_UPDATE_INTERVAL,
@@ -57,7 +62,5 @@ class TimerManagerIosImpl(
             },
         )
         timer?.start()
-
-        liveActivityManager.startLiveActivity(boilingTime)
     }
 }

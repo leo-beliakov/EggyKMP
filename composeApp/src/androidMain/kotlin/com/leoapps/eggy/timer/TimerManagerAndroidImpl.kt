@@ -59,7 +59,6 @@ class TimerManagerAndroidImpl(
     }
 
     override fun stopTimer() {
-        Log.d("MyTag", "Manager stopTimer")
         binder?.stopTimer()
 //        coroutineScope.cancel() //todo double-check
     }
