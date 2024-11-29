@@ -7,12 +7,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
+import com.leoapps.eggy.root.presentation.model.RootNavigationCommand
 import com.leoapps.eggy.welcome.presentation.BoilSetupScreen
 import com.leoapps.eggy.welcome.presentation.WelcomeScreen
 import com.leoapps.progress.presentation.BoilProgressScreen
@@ -44,7 +45,20 @@ fun RootScreen(
     )
 
     CollectEventsWithLifecycle(viewModel.navCommands) { command ->
+        when (command) {
+            is RootNavigationCommand.OpenSetupScreen -> {
+                navController.navigate(BoilSetupScreenDestination)
+            }
 
+            is RootNavigationCommand.OpenProgressScreen -> {
+                navController.navigate(
+                    BoilProgressScreenDestination(
+                        type = EggBoilingType.HARD.toString(),
+                        calculatedTime = 12457L,
+                    )
+                )
+            }
+        }
     }
 }
 

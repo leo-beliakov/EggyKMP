@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface TimerManager {
     val timerUpdates: Flow<TimerStatusUpdate>
 
-    fun isTimerRunning(): Boolean
+    suspend fun isTimerRunning(): Boolean
     fun getTimerSpecs(): Int?
 
     fun stopTimer()

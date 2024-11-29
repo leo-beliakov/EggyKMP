@@ -3,23 +3,31 @@ package com.leoapps.eggy.root.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leoapps.eggy.base.egg.domain.TimerManager
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import com.leoapps.eggy.root.presentation.model.RootNavigationCommand
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class RootViewModel(
-    private val timerManager: TimerManager
+    val timerManager: TimerManager
 ) : ViewModel() {
 
-    private val _navCommands = MutableSharedFlow<Unit>() // todo replace with sealed class
-    val navCommands = _navCommands.asSharedFlow()
+    private val _navCommands = Channel<RootNavigationCommand>()
+    val navCommands = _navCommands.receiveAsFlow()
+
+    val hasBeenOpenedFromNotification = false //todo real impl
 
     init {
-        println("MyTag, ${timerManager.isTimerRunning()}")
-        if(timerManager.isTimerRunning()) {
-            val specs = timerManager.getTimerSpecs() // todo use specs
-            viewModelScope.launch {
-                _navCommands.emit(Unit)
+        viewModelScope.launch {
+            when {
+                timerManager.isTimerRunning() -> {
+                    _navCommands.send(RootNavigationCommand.OpenSetupScreen) //todo change
+
+                }
+
+                hasBeenOpenedFromNotification -> {
+                    _navCommands.send(RootNavigationCommand.OpenSetupScreen)
+                }
             }
         }
     }

@@ -4,6 +4,10 @@ import Shared
 
 class LiveActivityManagerImpl: NSObject, LiveActivityManager {
 
+    var isRunning: Bool {
+        return !Activity<EggTimerActivityAttributes>.activities.isEmpty
+    }
+
     func startLiveActivity(boilingTime: Int64) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             print("Live Activities are disabled.")

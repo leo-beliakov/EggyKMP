@@ -26,7 +26,16 @@ class TimerManagerIosImpl(
     private val _timerUpdates = MutableSharedFlow<TimerStatusUpdate>()
     override val timerUpdates = _timerUpdates.asSharedFlow()
 
-    override fun isTimerRunning() = timer?.isRunning == true
+    // There're four possible options for a running timer:
+    // 1. There's an active LiveActivity
+    // 2. There's an active CountDownTimer
+    // 3. There's a pending notification
+    // 4. Combinations of the above
+    override suspend fun isTimerRunning(): Boolean {
+        return notificationsManager.hasScheduledNotification() ||
+                liveActivityManager.isRunning ||
+                timer?.isRunning == true
+    }
 
     override fun getTimerSpecs(): Int? = 0 //todo
 
@@ -64,3 +73,4 @@ class TimerManagerIosImpl(
         timer?.start()
     }
 }
+

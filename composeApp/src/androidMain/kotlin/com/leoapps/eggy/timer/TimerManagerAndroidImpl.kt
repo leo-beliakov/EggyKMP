@@ -6,7 +6,6 @@ import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.util.Log
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
@@ -33,7 +32,7 @@ class TimerManagerAndroidImpl(
 
     override fun getTimerSpecs(): Int? = 0 //todo implement
 
-    override fun isTimerRunning(): Boolean = TimerService.isRunning
+    override suspend fun isTimerRunning() = TimerService.isRunning
 
     override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
         this.boilingTime = boilingTime
