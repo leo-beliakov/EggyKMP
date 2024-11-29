@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.egg.domain.TimerManager
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
+import com.leoapps.eggy.timer.TimerManager
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
 import dev.icerock.moko.permissions.DeniedAlwaysException
@@ -88,7 +88,7 @@ class BoilProgressViewModel(
     fun onCancelationDialogConfirmed() {
         showDoalog(null)
         viewModelScope.launch { _events.emit(BoilProgressUiEvent.NavigateBack) }
-        timerManager.stopTimer()
+        timerManager.cancelTimer()
     }
 
     fun onCelebrationFinished() {
@@ -181,7 +181,7 @@ class BoilProgressViewModel(
     }
 
     private fun onStopClicked() {
-        timerManager.stopTimer()
+        timerManager.cancelTimer()
     }
 
     private fun requestNotificationsPermission() {

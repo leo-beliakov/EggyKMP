@@ -11,7 +11,9 @@ fun MainViewController(
     configure = {
         initKoin(){
             modules(
-                platformModule(activityManagerFactory)
+                platformModule(
+                    createLiveActivityManager = activityManagerFactory
+                )
             )
         }
     }

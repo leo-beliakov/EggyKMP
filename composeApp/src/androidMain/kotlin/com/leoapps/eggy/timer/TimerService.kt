@@ -6,19 +6,20 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.base.notification.BoilProgressNotificationManager
+import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.koin.android.ext.android.inject
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 private const val TIMER_UPDATE_INTERVAL = 200L
 private const val NOTIFICATION_UPDATE_INTERVAL = 1000L
@@ -26,6 +27,7 @@ private const val NOTIFICATION_UPDATE_INTERVAL = 1000L
 class TimerService : Service() {
 
     private val notificationManager: BoilProgressNotificationManager by inject()
+    private val timerSettingsRepository: TimerSettingsRepository by inject()
 
     private val coroutineScope = CoroutineScope(Job())
 
@@ -49,7 +51,7 @@ class TimerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.extras?.getBoolean(ACTION_CANCEL) == true) {
-            onStopTimer()
+            onCancelTimer()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -61,9 +63,13 @@ class TimerService : Service() {
         this.boilingTime = boilingTime
         this.eggType = eggType
 
-        notificationManager.cancelAllNotifications()
-        startForegroundNotification()
-        startTimer()
+        coroutineScope.launch {
+            val timerEndTime = Clock.System.now() + boilingTime.toDuration(DurationUnit.MILLISECONDS)
+            timerSettingsRepository.saveTimerSettings(timerEndTime, eggType)
+            notificationManager.cancelAllNotifications()
+            startForegroundNotification()
+            startTimer()
+        }
     }
 
     private fun startForegroundNotification() {
@@ -115,21 +121,28 @@ class TimerService : Service() {
     }
 
     private fun onTimerFinished() {
-        notificationManager.notifyBoilingFinished(eggType)
         coroutineScope.launch {
+            notificationManager.notifyBoilingFinished(eggType)
             _timerState.emit(TimerStatusUpdate.Finished)
+            finishTimer()
         }
-        onStopTimer()
     }
 
-    private fun onStopTimer() {
+    private fun onCancelTimer() {
+        coroutineScope.launch {
+            _timerState.emit(TimerStatusUpdate.Canceled)
+            finishTimer()
+        }
+    }
+
+    private suspend fun finishTimer() {
         timer?.cancel()
-        coroutineScope.launch { _timerState.emit(TimerStatusUpdate.Canceled) }
+        timerSettingsRepository.clearTimerSettings()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
-    inner class TimerBinder: Binder() {
+    inner class TimerBinder : Binder() {
 
         val timerState = _timerState.asSharedFlow()
 
@@ -138,7 +151,7 @@ class TimerService : Service() {
         }
 
         fun stopTimer() {
-            onStopTimer()
+            onCancelTimer()
         }
     }
 

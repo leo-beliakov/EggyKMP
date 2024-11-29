@@ -26,6 +26,7 @@ class NotificationsManager {
         }
     }
 
+    //todo unschedule the previous notification ?
     fun scheduleCompleteNotification(duration: Long) {
         val content = UNMutableNotificationContent().apply {
             setTitle("Timer Completed")

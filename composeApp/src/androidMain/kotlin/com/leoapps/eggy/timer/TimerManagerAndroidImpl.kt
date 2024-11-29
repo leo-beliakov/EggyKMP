@@ -7,7 +7,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.egg.domain.TimerManager
+import com.leoapps.eggy.progress.domain.TimerSettingsRepository
+import com.leoapps.eggy.progress.domain.model.TimerSettings
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -15,29 +16,25 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.datetime.Clock
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class TimerManagerAndroidImpl(
-    private val context: Context
+    private val context: Context,
+    private val timerSettingsRepository: TimerSettingsRepository,
 ) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
 
     private var binder: TimerService.TimerBinder? = null
 
-    private var boilingTime = 0L
-    private var eggType = EggBoilingType.MEDIUM
-
     private val _timerUpdates = MutableSharedFlow<TimerStatusUpdate>()
     override val timerUpdates = _timerUpdates.asSharedFlow()
 
-    override fun getTimerSpecs(): Int? = 0 //todo implement
-
-    override suspend fun isTimerRunning() = TimerService.isRunning
+    override suspend fun isTimerScheduled() = TimerService.isRunning
 
     override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
-        this.boilingTime = boilingTime
-        this.eggType = eggType
-
         context.bindService(
             Intent(context, TimerService::class.java),
             object : ServiceConnection {
@@ -57,8 +54,13 @@ class TimerManagerAndroidImpl(
         )
     }
 
-    override fun stopTimer() {
+    override fun cancelTimer() {
         binder?.stopTimer()
 //        coroutineScope.cancel() //todo double-check
     }
+
+    // In Android we don't need to handle the following methods
+    override fun onAppRelaunched() = Unit
+    override fun onAppLaunchedFromNotification() = Unit
+    override fun onAppLaunched() = Unit
 }

@@ -64,6 +64,16 @@ kotlin {
             //Permissions
             implementation(libs.moko.permissions)
             implementation(libs.moko.permissions.compose)
+
+            //Logging
+            implementation(libs.kotlin.logging)
+
+            //Data Store
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
+
+            //Date-Time
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

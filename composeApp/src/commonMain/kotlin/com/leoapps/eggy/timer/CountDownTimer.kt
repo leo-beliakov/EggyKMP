@@ -1,4 +1,4 @@
-package com.leoapps.eggy.base.egg.domain
+package com.leoapps.eggy.timer
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

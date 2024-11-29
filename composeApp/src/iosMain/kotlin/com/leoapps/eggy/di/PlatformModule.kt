@@ -1,6 +1,8 @@
 package com.leoapps.eggy.di
 
-import com.leoapps.eggy.base.egg.domain.TimerManager
+import com.leoapps.eggy.base.storage.ApplicationDirectoryProvider
+import com.leoapps.eggy.base.storage.ApplicationDirectoryProviderIosImpl
+import com.leoapps.eggy.timer.TimerManager
 import com.leoapps.eggy.timer.TimerManagerIosImpl
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.common.vibrator.VibrationManagerIosImpl
@@ -13,11 +15,12 @@ import org.koin.dsl.module
 
 
 fun platformModule(
-    activityManagerFactory: () -> LiveActivityManager
+    createLiveActivityManager: () -> LiveActivityManager
 ) = module {
-    single { activityManagerFactory() }.bind(LiveActivityManager::class)
+    single { createLiveActivityManager() }.bind(LiveActivityManager::class)
     singleOf(::VibrationManagerIosImpl).bind(VibrationManager::class)
     singleOf(::TimerManagerIosImpl).bind(TimerManager::class)
 
+    factoryOf(::ApplicationDirectoryProviderIosImpl).bind(ApplicationDirectoryProvider::class)
     factoryOf(::NotificationsManager)
 }
