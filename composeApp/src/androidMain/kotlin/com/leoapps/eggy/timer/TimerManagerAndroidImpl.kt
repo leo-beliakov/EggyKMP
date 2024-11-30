@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base.egg.domain.model.EggSize
+import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerSettings
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
@@ -34,7 +36,12 @@ class TimerManagerAndroidImpl(
 
     override suspend fun isTimerScheduled() = TimerService.isRunning
 
-    override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
+    override fun startTimer(
+        eggType: EggBoilingType,
+        eggSize: EggSize,
+        eggTemperature: EggTemperature,
+        boilingTime: Long,
+    ) {
         context.bindService(
             Intent(context, TimerService::class.java),
             object : ServiceConnection {

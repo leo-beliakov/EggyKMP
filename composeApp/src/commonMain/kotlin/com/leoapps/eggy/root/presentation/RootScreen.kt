@@ -53,8 +53,8 @@ fun RootScreen(
             is RootNavigationCommand.OpenProgressScreen -> {
                 navController.navigate(
                     BoilProgressScreenDestination(
-                        type = EggBoilingType.HARD.toString(),
-                        calculatedTime = 12457L,
+                        type = command.eggType.toString(),
+                        calculatedTime = command.boilingTime,
                     )
                 )
             }

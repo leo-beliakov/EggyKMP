@@ -2,14 +2,17 @@ package com.leoapps.eggy.root.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.leoapps.eggy.timer.TimerManager
+import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.root.presentation.model.RootNavigationCommand
+import com.leoapps.eggy.timer.TimerManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class RootViewModel(
-    val timerManager: TimerManager
+    private val timerManager: TimerManager,
+    private val timerSettingsRepository: TimerSettingsRepository,
 ) : ViewModel() {
 
     private val _navCommands = Channel<RootNavigationCommand>()
@@ -27,8 +30,14 @@ class RootViewModel(
             when {
                 timerManager.isTimerScheduled() -> {
                     timerManager.onAppRelaunched()
-                    _navCommands.send(RootNavigationCommand.OpenSetupScreen) //todo change
 
+                    val timerSettings = timerSettingsRepository.getTimerSettings() ?: return@launch
+                    _navCommands.send(
+                        RootNavigationCommand.OpenProgressScreen(
+                            boilingTime = timerSettings.timerTotalTime,
+                            eggType = timerSettings.eggType
+                        )
+                    )
                 }
 
                 hasBeenOpenedFromNotification -> {

@@ -28,6 +28,9 @@ class NotificationsManager {
 
     //todo unschedule the previous notification ?
     fun scheduleCompleteNotification(duration: Long) {
+        val notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
+        notificationCenter.removeDeliveredNotificationsWithIdentifiers(listOf(COMPLETE_NOTIFICATION_ID))
+
         val content = UNMutableNotificationContent().apply {
             setTitle("Timer Completed")
             setBody("Your timer has finished!")
@@ -44,7 +47,6 @@ class NotificationsManager {
             trigger = trigger
         )
 
-        val notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
         notificationCenter.addNotificationRequest(request) { error ->
             if (error != null) {
                 println("Failed to schedule notification: ${error.localizedDescription}")

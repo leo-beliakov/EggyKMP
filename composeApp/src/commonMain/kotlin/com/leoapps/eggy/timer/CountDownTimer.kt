@@ -12,7 +12,7 @@ class CountDownTimer(
     private val onTimerFinished: () -> Unit,
 ) {
     private val coroutineScope = CoroutineScope(Job())
-    private var timerJob : Job? = null
+    private var timerJob: Job? = null
 
     val isRunning: Boolean
         get() = timerJob?.isActive == true
@@ -20,13 +20,13 @@ class CountDownTimer(
     fun start() {
         timerJob?.cancel()
         timerJob = coroutineScope.launch {
-            var millisUntilFinished = millisInFuture
-            while(millisUntilFinished > 0) {
+            var millisPassed = 0L
+            while (millisPassed < millisInFuture) {
                 delay(tickInterval)
 
-                onTick(millisUntilFinished)
+                onTick(millisPassed)
 
-                millisUntilFinished -= tickInterval
+                millisPassed += tickInterval
             }
             onTimerFinished()
         }

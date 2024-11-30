@@ -1,14 +1,13 @@
 package com.leoapps.eggy.setup.presentation.model
 
-import com.leoapps.eggy.common.utils.EMPTY_CALCULATED_TIME
 import com.leoapps.progress.presentation.model.ActionButtonState
 import org.jetbrains.compose.resources.StringResource
 
 data class BoilProgressUiState(
     val titleRes: StringResource,
     val progress: Float = 0f,
-    val progressText: String = EMPTY_CALCULATED_TIME,
-    val boilingTime: String = EMPTY_CALCULATED_TIME,
+    val progressText: String = "",
+    val boilingTime: String = "",
     val buttonState: ActionButtonState = ActionButtonState.START,
 //    val finishCelebrationConfig: List<Party>? = null,
     val selectedDialog: Dialog? = null,

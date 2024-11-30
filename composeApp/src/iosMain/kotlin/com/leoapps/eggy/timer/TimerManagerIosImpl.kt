@@ -1,6 +1,8 @@
 package com.leoapps.eggy.timer
 
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base.egg.domain.model.EggSize
+import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
@@ -50,41 +52,37 @@ class TimerManagerIosImpl(
         }
     }
 
-    override fun startTimer(boilingTime: Long, eggType: EggBoilingType) {
+    override fun startTimer(
+        eggType: EggBoilingType,
+        eggSize: EggSize,
+        eggTemperature: EggTemperature,
+        boilingTime: Long,
+    ) {
         coroutineScope.launch {
             val timerEndTime = Clock.System.now() + boilingTime.toDuration(DurationUnit.MILLISECONDS)
-            timerSettingsRepository.saveTimerSettings(timerEndTime, eggType)
-            notificationsManager.scheduleCompleteNotification(boilingTime)
-            liveActivityManager.startLiveActivity(boilingTime)
-
-            timer = CountDownTimer(
-                millisInFuture = boilingTime,
-                tickInterval = TIMER_UPDATE_INTERVAL,
-                onTick = { millisUntilFinished ->
-                    coroutineScope.launch {
-                        _timerUpdates.emit(
-                            TimerStatusUpdate.Progress(
-                                timePassedMs = boilingTime - millisUntilFinished
-                            )
-                        )
-                    }
-                },
-                onTimerFinished = {
-                    coroutineScope.launch {
-                        timerSettingsRepository.clearTimerSettings()
-                        _timerUpdates.emit(TimerStatusUpdate.Finished)
-                    }
-                },
+            timerSettingsRepository.saveTimerSettings(
+                timerEndTime = timerEndTime,
+                timerTotalTime = boilingTime,
+                eggType = eggType,
+                eggSize = eggSize,
+                eggTemperature = eggTemperature,
             )
-            timer?.start()
         }
+        startTimer(
+            boilingTime = boilingTime,
+            timerOffset = 0,
+        )
     }
 
     override fun onAppRelaunched() {
         coroutineScope.launch {
-            val timerSettings = timerSettingsRepository.getTimerSettings()  ?: return@launch
-            val boilingTime = timerSettings.timerEndTime - Clock.System.now()
-            startTimer(boilingTime.inWholeMilliseconds, timerSettings.eggType)
+            val timerSettings = timerSettingsRepository.getTimerSettings() ?: return@launch
+            val remainingTime = timerSettings.timerEndTime - Clock.System.now()
+            val timerOffset = timerSettings.timerTotalTime - remainingTime.inWholeMilliseconds
+            startTimer(
+                boilingTime = timerSettings.timerTotalTime,
+                timerOffset = timerOffset,
+            )
         }
     }
 
@@ -100,6 +98,37 @@ class TimerManagerIosImpl(
             timerSettingsRepository.clearTimerSettings()
             liveActivityManager.stopLiveActivity()
         }
+    }
+
+    private fun startTimer(
+        boilingTime: Long,
+        timerOffset: Long,
+    ) {
+        val remainingTime = boilingTime - timerOffset
+        notificationsManager.scheduleCompleteNotification(remainingTime)
+        liveActivityManager.startLiveActivity(remainingTime)
+
+        timer = CountDownTimer(
+            millisInFuture = remainingTime,
+            tickInterval = TIMER_UPDATE_INTERVAL,
+            onTick = { millisPassed ->
+                coroutineScope.launch {
+                    _timerUpdates.emit(
+                        TimerStatusUpdate.Progress(
+                            timePassedMs = timerOffset + millisPassed
+                        )
+                    )
+                }
+            },
+            onTimerFinished = {
+                coroutineScope.launch {
+                    liveActivityManager.stopLiveActivity()
+                    timerSettingsRepository.clearTimerSettings()
+                    _timerUpdates.emit(TimerStatusUpdate.Finished)
+                }
+            },
+        )
+        timer?.start()
     }
 
     private suspend fun isTimerEndTimeInTheFuture(): Boolean {

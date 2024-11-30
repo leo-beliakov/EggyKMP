@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.CountDownTimer
 import androidx.core.app.ServiceCompat
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base.egg.domain.model.EggSize
+import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.base.notification.BoilProgressNotificationManager
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
@@ -65,7 +67,13 @@ class TimerService : Service() {
 
         coroutineScope.launch {
             val timerEndTime = Clock.System.now() + boilingTime.toDuration(DurationUnit.MILLISECONDS)
-            timerSettingsRepository.saveTimerSettings(timerEndTime, eggType)
+            timerSettingsRepository.saveTimerSettings(
+                timerEndTime = timerEndTime,
+                timerTotalTime = boilingTime,
+                eggType = eggType,
+                eggSize = EggSize.MEDIUM,
+                eggTemperature = EggTemperature.ROOM,
+            )
             notificationManager.cancelAllNotifications()
             startForegroundNotification()
             startTimer()

@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base.egg.domain.model.EggSize
+import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
@@ -101,7 +103,12 @@ class BoilProgressViewModel(
         when (result) {
             PermissionStatus.GRANTED -> {
                 showDoalog(null)
-                timerManager.startTimer(boilingTime, eggType)
+                timerManager.startTimer(
+                    boilingTime = boilingTime,
+                    eggType = eggType,
+                    eggSize = EggSize.MEDIUM, //todo get actual
+                    eggTemperature = EggTemperature.ROOM, //todo get actual
+                )
                 _state.update { it.copy(buttonState = ActionButtonState.STOP) }
             }
 
@@ -127,6 +134,7 @@ class BoilProgressViewModel(
 
     private fun getInitialState(): BoilProgressUiState {
         return BoilProgressUiState(
+            progressText = convertMsToTimerText(boilingTime),
             boilingTime = convertMsToTimerText(boilingTime),
             titleRes = when (eggType) {
                 EggBoilingType.SOFT -> Res.string.common_soft_boiled_eggs
@@ -140,7 +148,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(0L),
+                progressText = convertMsToTimerText(boilingTime),
                 buttonState = ActionButtonState.START
             )
         }
@@ -150,7 +158,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(0L),
+                progressText = convertMsToTimerText(boilingTime),
                 buttonState = ActionButtonState.START,
 //                finishCelebrationConfig = getCelebrationConfig()
             )
@@ -164,7 +172,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = timerState.timePassedMs / boilingTime.toFloat(),
-                progressText = convertMsToTimerText(timerState.timePassedMs),
+                progressText = convertMsToTimerText(boilingTime - timerState.timePassedMs),
                 buttonState = ActionButtonState.STOP
             )
         }
@@ -188,7 +196,12 @@ class BoilProgressViewModel(
         viewModelScope.launch {
             try {
                 permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
-                timerManager.startTimer(boilingTime, eggType)
+                timerManager.startTimer(
+                    boilingTime = boilingTime,
+                    eggType = eggType,
+                    eggSize = EggSize.MEDIUM, //todo get actual
+                    eggTemperature = EggTemperature.ROOM, //todo get actual
+                )
             } catch (e: DeniedAlwaysException) {
                 showDoalog(BoilProgressUiState.Dialog.RATIONALE)
             } catch (e: DeniedException) {
