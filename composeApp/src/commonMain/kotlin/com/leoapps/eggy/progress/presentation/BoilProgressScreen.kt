@@ -189,8 +189,8 @@ private fun BoilProgressContent(
     val timerState = rememberTimerState()
 
     LaunchedEffect(state.progress, state.progressText) {
-        timerState.setProgress(state.progress)
         timerState.progressText = state.progressText
+        timerState.setProgress(state.progress)
     }
 
     Box(
