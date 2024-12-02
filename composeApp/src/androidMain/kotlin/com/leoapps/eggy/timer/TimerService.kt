@@ -74,10 +74,11 @@ class TimerService : Service() {
                 eggSize = EggSize.MEDIUM,
                 eggTemperature = EggTemperature.ROOM,
             )
-            notificationManager.cancelAllNotifications()
-            startForegroundNotification()
-            startTimer()
         }
+        notificationManager.cancelAllNotifications()
+        startForegroundNotification()
+        startTimer()
+
     }
 
     private fun startForegroundNotification() {

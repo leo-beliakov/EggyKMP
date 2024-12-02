@@ -116,9 +116,9 @@ class BoilProgressNotificationManager(
 
     private fun getNotificationIcon(eggType: EggBoilingType): Bitmap {
         val iconResId = when (eggType) {
-            EggBoilingType.SOFT -> R.drawable.egg_soft
-            EggBoilingType.MEDIUM -> R.drawable.egg_medium
-            EggBoilingType.HARD -> R.drawable.egg_hard
+            EggBoilingType.SOFT -> R.drawable.notification_egg_soft
+            EggBoilingType.MEDIUM -> R.drawable.notification_egg_medium
+            EggBoilingType.HARD -> R.drawable.notification_egg_hard
         }
         return BitmapFactory.decodeResource(context.resources, iconResId)
     }
