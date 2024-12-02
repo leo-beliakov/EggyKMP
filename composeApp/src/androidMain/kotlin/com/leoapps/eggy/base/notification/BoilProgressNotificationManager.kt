@@ -14,6 +14,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.eggy.MainActivity
+import com.leoapps.eggy.MainActivity.Companion.IS_LAUNCHED_FROM_NOTIFICATION_KEY
 import com.leoapps.eggy.R
 import com.leoapps.eggy.common.utils.convertMsToText
 import com.leoapps.eggy.timer.TimerService
@@ -36,7 +38,7 @@ class BoilProgressNotificationManager(
         val notificationFinishChanel = NotificationChannel(
             FINISH_CHANNEL_ID,
             context.getString(R.string.notificaton_finish_channel_progress_title),
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
             description = context.getString(R.string.notificaton_finish_channel_progress_description)
             setShowBadge(true)
@@ -70,12 +72,26 @@ class BoilProgressNotificationManager(
 
     fun notifyBoilingFinished(eggType: EggBoilingType) {
         if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(IS_LAUNCHED_FROM_NOTIFICATION_KEY, true)
+            }
+
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE // Required for Android 12
+            )
+
             val notification = NotificationCompat.Builder(context, FINISH_CHANNEL_ID)
                 .setContentTitle(getNotificationTitle(eggType))
                 .setContentText(context.getString(R.string.notificaton_progress_finish_message))
                 .setCategory(Notification.CATEGORY_ALARM)
                 .setSmallIcon(R.drawable.ic_timer_grey)
                 .setLargeIcon(getNotificationIcon(eggType))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true) // Dismiss the notification after the user clicks it
                 .build()
 
             NotificationManagerCompat

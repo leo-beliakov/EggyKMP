@@ -1,6 +1,8 @@
 package com.leoapps.eggy.di
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.leoapps.eggy.base.startup.AppStartupInformationProvider
+import com.leoapps.eggy.base.startup.AppStartupInformationProviderImpl
 import com.leoapps.eggy.base.storage.ApplicationDirectoryProvider
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.progress.data.TimerSettingsRepositoryImpl
@@ -11,6 +13,7 @@ import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.BoilSetupViewModel
 import okio.Path.Companion.toPath
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -24,6 +27,8 @@ val sharedModule = module {
             produceFile = { "${appDirectoryProvider.appDirectory}/$dataStoreFileName".toPath() }
         )
     }
+
+    singleOf(::AppStartupInformationProviderImpl).bind(AppStartupInformationProvider::class)
 
     factoryOf(::CalculateBoilingTimeUseCase)
     factoryOf(::TimerSettingsRepositoryImpl).bind(TimerSettingsRepository::class)

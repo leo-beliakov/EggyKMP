@@ -8,7 +8,6 @@ import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 import kotlin.coroutines.resume
 
-private val COMPLETE_NOTIFICATION_ID = "timerCompleted"
 
 class NotificationsManager {
 
@@ -26,7 +25,6 @@ class NotificationsManager {
         }
     }
 
-    //todo unschedule the previous notification ?
     fun scheduleCompleteNotification(duration: Long) {
         val notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
         notificationCenter.removeDeliveredNotificationsWithIdentifiers(listOf(COMPLETE_NOTIFICATION_ID))
@@ -34,6 +32,8 @@ class NotificationsManager {
         val content = UNMutableNotificationContent().apply {
             setTitle("Timer Completed")
             setBody("Your timer has finished!")
+            setUserInfo(mapOf(USER_INFO_LAUNCHED_KEY to true))
+
             setSound(UNNotificationSound.defaultSound())
         }
 
@@ -61,5 +61,10 @@ class NotificationsManager {
         notificationCenter.removePendingNotificationRequestsWithIdentifiers(
             listOf(COMPLETE_NOTIFICATION_ID)
         )
+    }
+
+    companion object {
+        const val USER_INFO_LAUNCHED_KEY = "launched_from_notification_key"
+        const val COMPLETE_NOTIFICATION_ID = "timer_completed"
     }
 }
