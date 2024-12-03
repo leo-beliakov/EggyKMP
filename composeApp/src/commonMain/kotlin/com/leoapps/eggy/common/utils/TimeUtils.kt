@@ -1,4 +1,4 @@
-package com.leoapps.eggy.base.utils
+package com.leoapps.eggy.common.utils
 
 const val EMPTY_CALCULATED_TIME = "00:00"
 

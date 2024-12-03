@@ -27,8 +27,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
 import com.leoapps.base_ui.utils.annotatedStringResource
@@ -38,7 +36,6 @@ import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.Primary
 import com.leoapps.eggy.base.ui.theme.White
 import com.leoapps.eggy.base.ui.theme.dimens
-import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.BoilSetupViewModel
 import com.leoapps.setup.presentation.composables.CounterComposable
 import com.leoapps.setup.presentation.composables.IconedSelectionButton
@@ -48,6 +45,7 @@ import com.leoapps.setup.presentation.model.BoilSetupUiState
 import com.leoapps.setup.presentation.model.EggBoilingTypeUi
 import com.leoapps.setup.presentation.model.EggSizeUi
 import com.leoapps.setup.presentation.model.EggTemperatureUi
+import com.leoapps.vibration.presentation.LocalVibrationManager
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_continue
 import eggy.composeapp.generated.resources.ic_next
@@ -63,10 +61,11 @@ import eggy.composeapp.generated.resources.setup_timer_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun BoilSetupScreen(
-    viewModel: BoilSetupViewModel = viewModel { BoilSetupViewModel(CalculateBoilingTimeUseCase()) }, //todo fix this with DI
+    viewModel: BoilSetupViewModel = koinViewModel(),
     onContinueClicked: (type: EggBoilingType, time: Long) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -263,7 +262,7 @@ private fun TimerSection(
     nextButtonEnabled: Boolean,
     onNextClicked: () -> Unit
 ) {
-//    val vibratorManager = LocalVibrationManager.current
+    val vibratorManager = LocalVibrationManager.current
 
     Row {
         Column(
@@ -284,7 +283,7 @@ private fun TimerSection(
             contentPadding = PaddingValues(),
             colors = ButtonDefaults.buttonColors(containerColor = Primary),
             onClick = {
-//                vibratorManager.vibrateOnClick()
+                vibratorManager.vibrateOnClick()
                 onNextClicked()
             },
             elevation = ButtonDefaults.elevatedButtonElevation(

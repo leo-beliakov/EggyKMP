@@ -4,7 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.base.utils.convertMsToTimerText
+import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.model.BoilSetupUiEvent
 import com.leoapps.setup.presentation.model.BoilSetupUiState
