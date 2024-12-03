@@ -24,8 +24,3 @@ val PrimaryWithAlpha = Color(0xA0E69268)
 val PrimaryLight = Color(0xFFE8A480)
 val PrimaryAlmostWhite = Color(0xFFFFF4EF)
 val AlmostWhite = Color(0xFFF0F0F0)
-
-val СonfettiYellow = Color(0xFFfce18a)
-val СonfettiOrange = Color(0xFFff726d)
-val СonfettiPurple = Color(0xFFb48def)
-val СonfettiPink = Color(0xFFf4306d)
