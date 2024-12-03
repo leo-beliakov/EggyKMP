@@ -24,13 +24,14 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeApp"
             isStatic = true
+            baseName = "Shared"
+            binaryOption("bundleId", "com.leoapps.eggy")
         }
     }
-    
+
     sourceSets {
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -59,6 +60,20 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+
+            //Permissions
+            implementation(libs.moko.permissions)
+            implementation(libs.moko.permissions.compose)
+
+            //Logging
+            implementation(libs.kotlin.logging)
+
+            //Data Store
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
+
+            //Date-Time
+            implementation(libs.kotlinx.datetime)
         }
     }
 }
@@ -95,4 +110,3 @@ dependencies {
     implementation(libs.androidx.ui.android)
     debugImplementation(compose.uiTooling)
 }
-

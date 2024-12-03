@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
 import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.GraySuperLight
@@ -51,6 +51,8 @@ import com.leoapps.progress.presentation.composables.rememberTimerState
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
 import com.leoapps.vibration.presentation.LocalVibrationManager
+import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_back
 import eggy.composeapp.generated.resources.ic_back
@@ -79,35 +81,17 @@ fun BoilProgressScreen(
     onBackClicked: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-//    val activity = CurrentActivity()
 
-//    val permissionLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestPermission(),
-//        onResult = @RequiresApi(Build.VERSION_CODES.TIRAMISU) { granted ->
-//            val result = resolvePermissionStatus(
-//                activity = activity,
-//                isGranted = granted,
-//                permission = Manifest.permission.POST_NOTIFICATIONS
-//            )
-//            viewModel.onPermissionResult(result)
-//        },
-//    )
-//    val permissionSettingsLauncher = rememberLauncherForActivityResult(
-//        contract = OpenNotificationsSettingsContract(),
-//        onResult = @RequiresApi(Build.VERSION_CODES.TIRAMISU) {
-//            val result = resolvePermissionStatus(
-//                activity = activity,
-//                permission = Manifest.permission.POST_NOTIFICATIONS
-//            )
-//            viewModel.onPermissionSettingsResult(result)
-//        },
-//    )
+    val factory = rememberPermissionsControllerFactory()
+    val permissionController = remember(factory) {
+        factory.createPermissionsController()
+            .also { viewModel.permissionsController = it }
+    }
 
     BoilProgressScreen(
         state = state,
         onBackClicked = viewModel::onBackClicked,
         onButtonClicked = viewModel::onButtonClicked,
-        onCelebrationFinished = viewModel::onCelebrationFinished,
         onCancelationDialogConfirmed = viewModel::onCancelationDialogConfirmed,
         onRationaleDialogConfirm = viewModel::onRationaleDialogConfirm,
         onGoToSettingsDialogConfirm = viewModel::onGoToSettingsDialogConfirm,
@@ -118,15 +102,13 @@ fun BoilProgressScreen(
         when (event) {
             is BoilProgressUiEvent.NavigateBack -> onBackClicked()
 
-            is BoilProgressUiEvent.RequestNotificationsPermission -> {
-//                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-
             is BoilProgressUiEvent.OpenNotificationsSettings -> {
-//                permissionSettingsLauncher.launch()
+                permissionController.openAppSettings()
             }
         }
     }
+
+    BindEffect(permissionController)
 }
 
 @Composable
@@ -134,7 +116,6 @@ fun BoilProgressScreen(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
-    onCelebrationFinished: () -> Unit,
     onCancelationDialogConfirmed: () -> Unit,
     onRationaleDialogConfirm: () -> Unit,
     onGoToSettingsDialogConfirm: () -> Unit,
@@ -144,7 +125,6 @@ fun BoilProgressScreen(
         state = state,
         onBackClicked = onBackClicked,
         onButtonClicked = onButtonClicked,
-        onCelebrationFinished = onCelebrationFinished,
     )
 
     state.selectedDialog?.let { dialog ->
@@ -189,13 +169,12 @@ private fun BoilProgressContent(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
-    onCelebrationFinished: () -> Unit
 ) {
     val timerState = rememberTimerState()
 
     LaunchedEffect(state.progress, state.progressText) {
-        timerState.setProgress(state.progress)
         timerState.progressText = state.progressText
+        timerState.setProgress(state.progress)
     }
 
     Box(
@@ -232,20 +211,6 @@ private fun BoilProgressContent(
                 onButtonClicked = onButtonClicked,
             )
         }
-//        state.finishCelebrationConfig?.let { parties ->
-//            KonfettiView(
-//                modifier = Modifier.fillMaxSize(),
-//                parties = parties,
-//                updateListener = object : OnParticleSystemUpdateListener {
-//                    override fun onParticleSystemEnded(
-//                        system: PartySystem,
-//                        activeSystems: Int,
-//                    ) {
-//                        if (activeSystems == 0) onCelebrationFinished()
-//                    }
-//                }
-//            )
-//        }
     }
 }
 

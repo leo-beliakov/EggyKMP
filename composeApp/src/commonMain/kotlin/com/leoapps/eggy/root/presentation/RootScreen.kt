@@ -6,18 +6,20 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
+import com.leoapps.eggy.root.navigation.RootNavigator
+import com.leoapps.eggy.root.presentation.model.RootNavigationCommand
 import com.leoapps.eggy.welcome.presentation.BoilSetupScreen
 import com.leoapps.eggy.welcome.presentation.WelcomeScreen
 import com.leoapps.progress.presentation.BoilProgressScreen
-import com.leoapps.progress.presentation.BoilProgressViewModel
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 object WelcomeScreenDestination
@@ -34,8 +36,33 @@ data class BoilProgressScreenDestination(
 private const val NAVIGATION_ANIM_DURATION = 400
 
 @Composable
-fun RootScreen() {
+fun RootScreen(
+    viewModel: RootViewModel = koinViewModel()
+) {
     val navController = rememberNavController()
+    val navigator = remember(navController) { RootNavigator(navController) }
+
+    RootScreen(
+        navController = navController,
+        navigator = navigator,
+    )
+
+    CollectEventsWithLifecycle(viewModel.navCommands) { command ->
+        when (command) {
+            is RootNavigationCommand.OpenSetupScreen -> navigator.openSetupScreen()
+            is RootNavigationCommand.OpenProgressScreen -> navigator.jumpToProgressScreen(
+                type = command.eggType,
+                time = command.boilingTime
+            )
+        }
+    }
+}
+
+@Composable
+private fun RootScreen(
+    navController: NavHostController,
+    navigator: RootNavigator
+) {
     val fadeAnimationSpec = tween<Float>(
         durationMillis = NAVIGATION_ANIM_DURATION,
         easing = LinearEasing
@@ -53,14 +80,7 @@ fun RootScreen() {
             exitTransition = { fadeOut(fadeAnimationSpec) }
         ) {
             WelcomeScreen(
-                onContinueClicked = {
-                    navController.navigate(BoilSetupScreenDestination) {
-                        popUpTo<WelcomeScreenDestination> {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                }
+                onContinueClicked = navigator::openSetupScreen
             )
         }
         composable<BoilSetupScreenDestination>(
@@ -68,16 +88,7 @@ fun RootScreen() {
             exitTransition = { fadeOut(fadeAnimationSpec) }
         ) {
             BoilSetupScreen(
-                onContinueClicked = { type, time ->
-                    navController.navigate(
-                        BoilProgressScreenDestination(
-                            type = type.toString(),
-                            calculatedTime = time,
-                        )
-                    ) {
-                        launchSingleTop = true
-                    }
-                }
+                onContinueClicked = navigator::openProgressScreen
             )
         }
         composable<BoilProgressScreenDestination>(
@@ -95,9 +106,7 @@ fun RootScreen() {
             }
         ) { backStackEntry ->
             BoilProgressScreen(
-                onBackClicked = {
-                    navController.navigateUp()
-                }
+                onBackClicked = navigator::navigateBack
             )
         }
     }

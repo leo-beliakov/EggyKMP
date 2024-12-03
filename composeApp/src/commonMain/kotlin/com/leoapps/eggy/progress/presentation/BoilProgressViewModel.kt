@@ -6,13 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.leoapps.base.egg.domain.model.EggBoilingType
+import com.leoapps.base.egg.domain.model.EggSize
+import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
+import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
-import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.timer.TimerManager
 import com.leoapps.progress.presentation.model.ActionButtonState
 import com.leoapps.progress.presentation.model.BoilProgressUiEvent
+import dev.icerock.moko.permissions.DeniedAlwaysException
+import dev.icerock.moko.permissions.DeniedException
+import dev.icerock.moko.permissions.Permission
+import dev.icerock.moko.permissions.PermissionsController
 import eggy.composeapp.generated.resources.Res
 import eggy.composeapp.generated.resources.common_hard_boiled_eggs
 import eggy.composeapp.generated.resources.common_medium_boiled_eggs
@@ -22,15 +29,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Stable // https://issuetracker.google.com/issues/280284177
-class BoilProgressViewModel (
-//    @ApplicationContext private val context: Context,
+class BoilProgressViewModel(
     private val vibrationManager: VibrationManager,
+    private val timerManager: TimerManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    lateinit var permissionsController: PermissionsController
 
     private val args = savedStateHandle.toRoute<BoilProgressScreenDestination>()
     private val eggType = EggBoilingType.fromString(args.type) ?: EggBoilingType.MEDIUM
@@ -42,27 +53,17 @@ class BoilProgressViewModel (
     private val _events = MutableSharedFlow<BoilProgressUiEvent>()
     val events = _events.asSharedFlow()
 
-//    private var binder: BoilProgressService.MyBinder? = null
     private var serviceSubscribtionJob: Job? = null
 
-//    private val serviceConnection = object : ServiceConnection {
-//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-//            binder = service as? BoilProgressService.MyBinder
-//            serviceSubscribtionJob = collectServiceState()
-//        }
-
-//        override fun onServiceDisconnected(name: ComponentName?) {
-//            binder = null
-//            serviceSubscribtionJob?.cancel()
-//        }
-//    }
-
     init {
-//        context.bindService(
-//            Intent(context, BoilProgressService::class.java),
-//            serviceConnection,
-//            BIND_AUTO_CREATE,
-//        )
+        timerManager.timerUpdates
+            .onEach { timerState ->
+                when (timerState) {
+                    TimerStatusUpdate.Canceled -> onTimerCanceled()
+                    TimerStatusUpdate.Finished -> onTimerFinished()
+                    is TimerStatusUpdate.Progress -> onTimerProgressUpdate(timerState)
+                }
+            }.launchIn(viewModelScope)
     }
 
     fun onButtonClicked() {
@@ -89,37 +90,19 @@ class BoilProgressViewModel (
     fun onCancelationDialogConfirmed() {
         showDoalog(null)
         viewModelScope.launch { _events.emit(BoilProgressUiEvent.NavigateBack) }
-//        binder?.stopTimer()
-    }
-
-    fun onCelebrationFinished() {
-//        _state.update {
-//            it.copy(finishCelebrationConfig = null)
-//        }
-    }
-
-    fun onPermissionResult(result: PermissionStatus) {
-        when (result) {
-            PermissionStatus.GRANTED -> {
-//                binder?.startTimer(boilingTime, eggType)
-                _state.update { it.copy(buttonState = ActionButtonState.STOP) }
-            }
-
-            PermissionStatus.DENIED -> {
-                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
-            }
-
-            PermissionStatus.DONT_ASK_AGAIN -> {
-                showDoalog(BoilProgressUiState.Dialog.RATIONALE_GO_TO_SETTINGS)
-            }
-        }
+        timerManager.cancelTimer()
     }
 
     fun onPermissionSettingsResult(result: PermissionStatus) {
         when (result) {
             PermissionStatus.GRANTED -> {
                 showDoalog(null)
-//                binder?.startTimer(boilingTime, eggType)
+                timerManager.startTimer(
+                    boilingTime = boilingTime,
+                    eggType = eggType,
+                    eggSize = EggSize.MEDIUM, //todo get actual
+                    eggTemperature = EggTemperature.ROOM, //todo get actual
+                )
                 _state.update { it.copy(buttonState = ActionButtonState.STOP) }
             }
 
@@ -133,9 +116,7 @@ class BoilProgressViewModel (
 
     fun onRationaleDialogConfirm() {
         showDoalog(null)
-        viewModelScope.launch {
-            _events.emit(BoilProgressUiEvent.RequestNotificationsPermission)
-        }
+        requestNotificationsPermission()
     }
 
     fun onGoToSettingsDialogConfirm() {
@@ -147,6 +128,7 @@ class BoilProgressViewModel (
 
     private fun getInitialState(): BoilProgressUiState {
         return BoilProgressUiState(
+            progressText = convertMsToTimerText(boilingTime),
             boilingTime = convertMsToTimerText(boilingTime),
             titleRes = when (eggType) {
                 EggBoilingType.SOFT -> Res.string.common_soft_boiled_eggs
@@ -156,22 +138,11 @@ class BoilProgressViewModel (
         )
     }
 
-//    private fun collectServiceState(): Job? {
-//        return binder?.state
-//            ?.onEach { timerState ->
-//                when (timerState) {
-//                    TimerStatusUpdate.Canceled -> onTimerCanceled()
-//                    TimerStatusUpdate.Finished -> onTimerFinished()
-//                    is TimerStatusUpdate.Progress -> onTimerProgressUpdate(timerState)
-//                }
-//            }?.launchIn(viewModelScope)
-//    }
-
     private fun onTimerCanceled() {
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(0L),
+                progressText = convertMsToTimerText(boilingTime),
                 buttonState = ActionButtonState.START
             )
         }
@@ -181,9 +152,8 @@ class BoilProgressViewModel (
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(0L),
+                progressText = convertMsToTimerText(boilingTime),
                 buttonState = ActionButtonState.START,
-//                finishCelebrationConfig = getCelebrationConfig()
             )
         }
         vibrationManager.vibratePattern(
@@ -194,8 +164,9 @@ class BoilProgressViewModel (
     private fun onTimerProgressUpdate(timerState: TimerStatusUpdate.Progress) {
         _state.update {
             it.copy(
-                progress = timerState.valueMs / boilingTime.toFloat(),
-                progressText = convertMsToTimerText(timerState.valueMs),
+                progress = timerState.timePassedMs / boilingTime.toFloat(),
+                progressText = convertMsToTimerText(boilingTime - timerState.timePassedMs),
+                buttonState = ActionButtonState.STOP
             )
         }
     }
@@ -207,48 +178,37 @@ class BoilProgressViewModel (
     }
 
     private fun onStartClicked() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            viewModelScope.launch {
-//                _events.emit(BoilProgressUiEvent.RequestNotificationsPermission)
-//            }
-//        } else {
-//            onPermissionResult(PermissionStatus.GRANTED)
-//        }
+        requestNotificationsPermission()
     }
 
     private fun onStopClicked() {
-//        binder?.stopTimer()
-        _state.update { it.copy(buttonState = ActionButtonState.START) }
+        timerManager.cancelTimer()
     }
 
-//    private fun getCelebrationConfig(): List<Party> {
-//        val party = Party(
-//            speed = 10f,
-//            maxSpeed = 30f,
-//            damping = 0.9f,
-//            angle = Angle.RIGHT - 45,
-//            spread = Spread.SMALL,
-//            colors = listOf(
-//                СonfettiYellow.toArgb(),
-//                СonfettiOrange.toArgb(),
-//                СonfettiPurple.toArgb(),
-//                СonfettiPink.toArgb(),
-//            ),
-//            emitter = Emitter(TIMER_FINISH_ANIMATION_DURATION_MS).perSecond(50),
-//            position = Position.Relative(0.0, 0.35)
-//        )
-//
-//        return listOf(
-//            party,
-//            party.copy(
-//                angle = party.angle - 90, // flip angle from right to left
-//                position = Position.Relative(1.0, 0.35)
-//            ),
-//        )
-//    }
+    private fun requestNotificationsPermission() {
+        viewModelScope.launch {
+            try {
+                if(!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
+                    permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
+                }
+
+                timerManager.startTimer(
+                    boilingTime = boilingTime,
+                    eggType = eggType,
+                    eggSize = EggSize.MEDIUM, //todo get actual
+                    eggTemperature = EggTemperature.ROOM, //todo get actual
+                )
+            } catch (e: DeniedAlwaysException) {
+                showDoalog(BoilProgressUiState.Dialog.RATIONALE_GO_TO_SETTINGS)
+            } catch (e: DeniedException) {
+                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
+            } catch (e: Exception) {
+                println("permission Request Failed, e: ${e}")
+            }
+        }
+    }
 
     private companion object {
         val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
-        val TIMER_FINISH_ANIMATION_DURATION_MS = 3000L
     }
 }

@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Eggy</string>
+
+    <string name="common_soft_boiled_eggs">Soft Boiled Eggs</string>
+    <string name="common_medium_boiled_eggs">Medium Boiled Eggs</string>
+    <string name="common_hard_boiled_eggs">Hard Boiled Eggs</string>
+
+    <string name="notification_progress_message">Time left: %1$s</string>
+    <string name="notificaton_progress_channel_progress_title">Progress Alerts</string>
+    <string name="notificaton_finish_channel_progress_title">Timer Alerts</string>
+    <string name="notificaton_progress_channel_progress_description">Stay updated with the progress of your boiling eggs to achieve the perfect cook.</string>
+    <string name="notificaton_finish_channel_progress_description">Receive alerts when your eggs are perfectly boiled and ready to enjoy.</string>
+    <string name="notificaton_progress_action_cancel">Cancel</string>
+    <string name="notificaton_progress_finish_message">Eggs are ready to be served. Bon appétit!</string>
 </resources>
