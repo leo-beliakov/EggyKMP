@@ -31,7 +31,8 @@ class BoilProgressNotificationManager(
             context.getString(R.string.notificaton_progress_channel_progress_title),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = context.getString(R.string.notificaton_progress_channel_progress_description)
+            description =
+                context.getString(R.string.notificaton_progress_channel_progress_description)
             setShowBadge(false)
         }
 
@@ -40,7 +41,8 @@ class BoilProgressNotificationManager(
             context.getString(R.string.notificaton_finish_channel_progress_title),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = context.getString(R.string.notificaton_finish_channel_progress_description)
+            description =
+                context.getString(R.string.notificaton_finish_channel_progress_description)
             setShowBadge(true)
         }
 
@@ -72,25 +74,13 @@ class BoilProgressNotificationManager(
 
     fun notifyBoilingFinished(eggType: EggBoilingType) {
         if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra(IS_LAUNCHED_FROM_NOTIFICATION_KEY, true)
-            }
-
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE // Required for Android 12
-            )
-
             val notification = NotificationCompat.Builder(context, FINISH_CHANNEL_ID)
                 .setContentTitle(getNotificationTitle(eggType))
                 .setContentText(context.getString(R.string.notificaton_progress_finish_message))
                 .setCategory(Notification.CATEGORY_ALARM)
                 .setSmallIcon(R.drawable.ic_timer_grey)
                 .setLargeIcon(getNotificationIcon(eggType))
-                .setContentIntent(pendingIntent)
+                .setContentIntent(getMainActivityPendingIntent())
                 .setAutoCancel(true) // Dismiss the notification after the user clicks it
                 .build()
 
@@ -114,9 +104,24 @@ class BoilProgressNotificationManager(
             .setProgress(MAX_PROGRESS, progress, false)
             .setSmallIcon(R.drawable.ic_timer_grey)
             .setLargeIcon(getNotificationIcon(eggType))
+            .setContentIntent(getMainActivityPendingIntent())
             .setOngoing(true)
             .addAction(getNotificationAction())
             .build()
+    }
+
+    private fun getMainActivityPendingIntent(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(IS_LAUNCHED_FROM_NOTIFICATION_KEY, true)
+        }
+
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE // Required for Android 12
+        )
     }
 
     private fun getNotificationMessage(timeLeft: Long) = context.getString(
