@@ -93,12 +93,6 @@ class BoilProgressViewModel(
         timerManager.cancelTimer()
     }
 
-    fun onCelebrationFinished() {
-//        _state.update {
-//            it.copy(finishCelebrationConfig = null)
-//        }
-    }
-
     fun onPermissionSettingsResult(result: PermissionStatus) {
         when (result) {
             PermissionStatus.GRANTED -> {
@@ -160,7 +154,6 @@ class BoilProgressViewModel(
                 progress = 0f,
                 progressText = convertMsToTimerText(boilingTime),
                 buttonState = ActionButtonState.START,
-//                finishCelebrationConfig = getCelebrationConfig()
             )
         }
         vibrationManager.vibratePattern(
@@ -195,7 +188,10 @@ class BoilProgressViewModel(
     private fun requestNotificationsPermission() {
         viewModelScope.launch {
             try {
-                permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
+                if(!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
+                    permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
+                }
+
                 timerManager.startTimer(
                     boilingTime = boilingTime,
                     eggType = eggType,
@@ -203,43 +199,16 @@ class BoilProgressViewModel(
                     eggTemperature = EggTemperature.ROOM, //todo get actual
                 )
             } catch (e: DeniedAlwaysException) {
-                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
-            } catch (e: DeniedException) {
                 showDoalog(BoilProgressUiState.Dialog.RATIONALE_GO_TO_SETTINGS)
+            } catch (e: DeniedException) {
+                showDoalog(BoilProgressUiState.Dialog.RATIONALE)
             } catch (e: Exception) {
-                println("sreverecs")
+                println("permission Request Failed, e: ${e}")
             }
         }
     }
 
-//    private fun getCelebrationConfig(): List<Party> {
-//        val party = Party(
-//            speed = 10f,
-//            maxSpeed = 30f,
-//            damping = 0.9f,
-//            angle = Angle.RIGHT - 45,
-//            spread = Spread.SMALL,
-//            colors = listOf(
-//                СonfettiYellow.toArgb(),
-//                СonfettiOrange.toArgb(),
-//                СonfettiPurple.toArgb(),
-//                СonfettiPink.toArgb(),
-//            ),
-//            emitter = Emitter(TIMER_FINISH_ANIMATION_DURATION_MS).perSecond(50),
-//            position = Position.Relative(0.0, 0.35)
-//        )
-//
-//        return listOf(
-//            party,
-//            party.copy(
-//                angle = party.angle - 90, // flip angle from right to left
-//                position = Position.Relative(1.0, 0.35)
-//            ),
-//        )
-//    }
-
     private companion object {
         val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
-        val TIMER_FINISH_ANIMATION_DURATION_MS = 3000L
     }
 }

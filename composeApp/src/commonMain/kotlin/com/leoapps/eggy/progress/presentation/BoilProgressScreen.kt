@@ -81,30 +81,17 @@ fun BoilProgressScreen(
     onBackClicked: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     val factory = rememberPermissionsControllerFactory()
     val permissionController = remember(factory) {
         factory.createPermissionsController()
             .also { viewModel.permissionsController = it }
     }
 
-//    val activity = CurrentActivity()
-
-//    val permissionSettingsLauncher = rememberLauncherForActivityResult(
-//        contract = OpenNotificationsSettingsContract(),
-//        onResult = @RequiresApi(Build.VERSION_CODES.TIRAMISU) {
-//            val result = resolvePermissionStatus(
-//                activity = activity,
-//                permission = Manifest.permission.POST_NOTIFICATIONS
-//            )
-//            viewModel.onPermissionSettingsResult(result)
-//        },
-//    )
-
     BoilProgressScreen(
         state = state,
         onBackClicked = viewModel::onBackClicked,
         onButtonClicked = viewModel::onButtonClicked,
-        onCelebrationFinished = viewModel::onCelebrationFinished,
         onCancelationDialogConfirmed = viewModel::onCancelationDialogConfirmed,
         onRationaleDialogConfirm = viewModel::onRationaleDialogConfirm,
         onGoToSettingsDialogConfirm = viewModel::onGoToSettingsDialogConfirm,
@@ -116,7 +103,7 @@ fun BoilProgressScreen(
             is BoilProgressUiEvent.NavigateBack -> onBackClicked()
 
             is BoilProgressUiEvent.OpenNotificationsSettings -> {
-//                permissionSettingsLauncher.launch()
+                permissionController.openAppSettings()
             }
         }
     }
@@ -129,7 +116,6 @@ fun BoilProgressScreen(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
-    onCelebrationFinished: () -> Unit,
     onCancelationDialogConfirmed: () -> Unit,
     onRationaleDialogConfirm: () -> Unit,
     onGoToSettingsDialogConfirm: () -> Unit,
@@ -139,7 +125,6 @@ fun BoilProgressScreen(
         state = state,
         onBackClicked = onBackClicked,
         onButtonClicked = onButtonClicked,
-        onCelebrationFinished = onCelebrationFinished,
     )
 
     state.selectedDialog?.let { dialog ->
@@ -184,7 +169,6 @@ private fun BoilProgressContent(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
-    onCelebrationFinished: () -> Unit
 ) {
     val timerState = rememberTimerState()
 
@@ -227,20 +211,6 @@ private fun BoilProgressContent(
                 onButtonClicked = onButtonClicked,
             )
         }
-//        state.finishCelebrationConfig?.let { parties ->
-//            KonfettiView(
-//                modifier = Modifier.fillMaxSize(),
-//                parties = parties,
-//                updateListener = object : OnParticleSystemUpdateListener {
-//                    override fun onParticleSystemEnded(
-//                        system: PartySystem,
-//                        activeSystems: Int,
-//                    ) {
-//                        if (activeSystems == 0) onCelebrationFinished()
-//                    }
-//                }
-//            )
-//        }
     }
 }
 

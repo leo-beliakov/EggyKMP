@@ -9,7 +9,6 @@ data class BoilProgressUiState(
     val progressText: String = "",
     val boilingTime: String = "",
     val buttonState: ActionButtonState = ActionButtonState.START,
-//    val finishCelebrationConfig: List<Party>? = null,
     val selectedDialog: Dialog? = null,
 ) {
     val isInProgress: Boolean
