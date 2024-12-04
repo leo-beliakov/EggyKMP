@@ -39,7 +39,7 @@ class BoilProgressNotificationManager(
         val notificationFinishChanel = NotificationChannel(
             FINISH_CHANNEL_ID,
             context.getString(R.string.notificaton_finish_channel_progress_title),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description =
                 context.getString(R.string.notificaton_finish_channel_progress_description)

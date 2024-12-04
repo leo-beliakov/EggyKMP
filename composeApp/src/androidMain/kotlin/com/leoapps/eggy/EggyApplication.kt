@@ -14,18 +14,7 @@ class EggyApplication : Application() {
     private val notificationChannelManagers: NotificationChannelsManager by inject()
 
     override fun onCreate() {
-
-//        lateinit var activityResultRegistryOwner : ActivityResultRegistryOwner
-//        activityResultRegistryOwner.activityResultRegistry.register(
-//            "",
-//            ActivityResultContracts.RequestMultiplePermissions()
-//        ) { permissions ->
-//             Handle the permissions request result
-//
-//        }
-
-
-            super.onCreate()
+        super.onCreate()
         initKoin {
             androidContext(this@EggyApplication)
             modules(platformModule)
