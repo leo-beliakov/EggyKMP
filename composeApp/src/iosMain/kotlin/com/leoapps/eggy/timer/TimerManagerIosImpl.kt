@@ -45,10 +45,10 @@ class TimerManagerIosImpl(
     override fun cancelTimer() {
         coroutineScope.launch {
             timer?.cancel()
-            timerSettingsRepository.clearTimerSettings()
-            notificationsManager.cancelCompleteNotification()
             liveActivityManager.stopLiveActivity()
+            notificationsManager.cancelCompleteNotification()
             _timerUpdates.emit(TimerStatusUpdate.Canceled)
+            timerSettingsRepository.clearTimerSettings()
         }
     }
 
@@ -105,8 +105,6 @@ class TimerManagerIosImpl(
         timerOffset: Long,
     ) {
         val remainingTime = boilingTime - timerOffset
-        notificationsManager.scheduleCompleteNotification(remainingTime)
-        liveActivityManager.startLiveActivity(remainingTime)
 
         timer = CountDownTimer(
             millisInFuture = remainingTime,
@@ -128,7 +126,10 @@ class TimerManagerIosImpl(
                 }
             },
         )
+
         timer?.start()
+        liveActivityManager.startLiveActivity(remainingTime)
+        notificationsManager.scheduleCompleteNotification(remainingTime)
     }
 
     private suspend fun isTimerEndTimeInTheFuture(): Boolean {

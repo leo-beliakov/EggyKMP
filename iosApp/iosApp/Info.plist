@@ -17,11 +17,21 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app does not use Bluetooth directly. This permission is included by a library used to request permission for notifications.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app does not access contacts directly. This permission is included by a library used to request permission for notifications.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app does not access location data directly. This permission is included by a library used to request permission for notifications.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app does not use motion data directly. This permission is included by a library used to request permission for notifications.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>

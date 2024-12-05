@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 class CountDownTimer(
     private val millisInFuture: Long,
@@ -19,14 +20,13 @@ class CountDownTimer(
 
     fun start() {
         timerJob?.cancel()
+            val startTimeMillis = Clock.System.now().toEpochMilliseconds()
         timerJob = coroutineScope.launch {
             var millisPassed = 0L
             while (millisPassed < millisInFuture) {
-                delay(tickInterval)
-
                 onTick(millisPassed)
-
-                millisPassed += tickInterval
+                millisPassed = Clock.System.now().toEpochMilliseconds() - startTimeMillis
+                delay(tickInterval - (millisPassed % tickInterval))
             }
             onTimerFinished()
         }
