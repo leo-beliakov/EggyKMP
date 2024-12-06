@@ -17,7 +17,7 @@ import org.koin.core.context.KoinContext
 @Composable
 @Preview
 fun App() {
-    val vibrationManager: VibrationManager = koinInject()
+    val vibrationManager: VibrationManager = koinInject() //todo remmeber?
 
     EggyTheme {
         CompositionLocalProvider(LocalVibrationManager provides vibrationManager) {

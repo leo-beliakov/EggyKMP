@@ -3,6 +3,7 @@ package com.leoapps.eggy.timer
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +23,7 @@ class TimerManagerIosImpl(
     private val liveActivityManager: LiveActivityManager,
     private val notificationsManager: NotificationsManager,
     private val timerSettingsRepository: TimerSettingsRepository,
+    private val logger: EggyLogger,
 ) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
@@ -43,6 +45,7 @@ class TimerManagerIosImpl(
     }
 
     override fun cancelTimer() {
+        logger.i { "TimerManager cancelTimer called" }
         coroutineScope.launch {
             timer?.cancel()
             liveActivityManager.stopLiveActivity()
@@ -58,6 +61,7 @@ class TimerManagerIosImpl(
         eggTemperature: EggTemperature,
         boilingTime: Long,
     ) {
+        logger.i { "TimerManager startTimer called" }
         coroutineScope.launch {
             val timerEndTime = Clock.System.now() + boilingTime.toDuration(DurationUnit.MILLISECONDS)
             timerSettingsRepository.saveTimerSettings(
@@ -110,6 +114,7 @@ class TimerManagerIosImpl(
             millisInFuture = remainingTime,
             tickInterval = TIMER_UPDATE_INTERVAL,
             onTick = { millisPassed ->
+                logger.i { "TimerManager updateProgress ${(timerOffset + millisPassed) / 1000}" }
                 coroutineScope.launch {
                     _timerUpdates.emit(
                         TimerStatusUpdate.Progress(
@@ -119,6 +124,7 @@ class TimerManagerIosImpl(
                 }
             },
             onTimerFinished = {
+                logger.i { "TimerManager onTimerFinished" }
                 coroutineScope.launch {
                     liveActivityManager.stopLiveActivity()
                     timerSettingsRepository.clearTimerSettings()

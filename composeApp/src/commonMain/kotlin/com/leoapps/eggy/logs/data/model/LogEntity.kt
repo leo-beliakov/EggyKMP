@@ -10,4 +10,5 @@ data class LogEntity(
     val tag: String,
     val message: String,
     val timestamp: Long,
+    val severity: LogSeverity
 )

@@ -9,6 +9,7 @@ import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerSettings
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
@@ -25,6 +26,7 @@ import kotlin.time.toDuration
 class TimerManagerAndroidImpl(
     private val context: Context,
     private val timerSettingsRepository: TimerSettingsRepository,
+    private val logger: EggyLogger,
 ) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
@@ -42,10 +44,13 @@ class TimerManagerAndroidImpl(
         eggTemperature: EggTemperature,
         boilingTime: Long,
     ) {
+        logger.i { "TimerManager startTimer called" }
+
         context.bindService(
             Intent(context, TimerService::class.java),
             object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    logger.i { "TimerManager onServiceConnected" }
                     binder = service as? TimerService.TimerBinder
                     binder?.startTimer(boilingTime, eggType)
                     binder?.timerState?.onEach { update ->
@@ -54,6 +59,7 @@ class TimerManagerAndroidImpl(
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
+                    logger.i { "TimerManager onServiceDisconnected" }
                     binder = null
                 }
             },
@@ -62,6 +68,7 @@ class TimerManagerAndroidImpl(
     }
 
     override fun cancelTimer() {
+        logger.i { "TimerManager cancelTimer called" }
         binder?.stopTimer()
 //        coroutineScope.cancel() //todo double-check
     }

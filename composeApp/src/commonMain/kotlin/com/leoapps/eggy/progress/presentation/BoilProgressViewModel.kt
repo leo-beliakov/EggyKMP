@@ -12,6 +12,7 @@ import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.logs.data.LogDao
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
 import com.leoapps.eggy.timer.TimerManager
@@ -41,6 +42,7 @@ class BoilProgressViewModel(
     private val vibrationManager: VibrationManager,
     private val timerManager: TimerManager,
     private val dao: LogDao,
+    private val logger: EggyLogger,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -59,21 +61,10 @@ class BoilProgressViewModel(
     private var serviceSubscribtionJob: Job? = null
 
     init {
-        viewModelScope.launch {
-            println("Reading Logs")
-            val firstBunch = dao.getAllLogs().first()
-            println("Recieved Logs")
-            firstBunch.forEach {
-                println("Log: $it")
-            }
-            dao.getAllLogs()
-                .collect {
-                    val first = it.first()
-                    print("firstLog: $first")
-                }
-        }
+        logger.i { "BoilProgressViewModel init" }
         timerManager.timerUpdates
             .onEach { timerState ->
+                logger.i { "BoilProgressViewModel timerUpdates $timerState" }
                 when (timerState) {
                     TimerStatusUpdate.Canceled -> onTimerCanceled()
                     TimerStatusUpdate.Finished -> onTimerFinished()

@@ -68,7 +68,7 @@ kotlin {
             implementation(libs.moko.permissions.compose)
 
             //Logging
-            implementation(libs.kotlin.logging)
+            implementation(libs.kermit.logger)
 
             //Data Store
             implementation(libs.datastore)

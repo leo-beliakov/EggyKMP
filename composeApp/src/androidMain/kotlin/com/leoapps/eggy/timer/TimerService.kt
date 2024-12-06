@@ -11,6 +11,7 @@ import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.base.notification.BoilProgressNotificationManager
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,7 @@ class TimerService : Service() {
 
     private val notificationManager: BoilProgressNotificationManager by inject()
     private val timerSettingsRepository: TimerSettingsRepository by inject()
+    private val logger: EggyLogger by inject()
 
     private val coroutineScope = CoroutineScope(Job())
 
@@ -43,16 +45,19 @@ class TimerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        logger.i { "TimerService onCreate" }
         isRunning = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        logger.i { "TimerService onDestroy" }
         isRunning = false
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.extras?.getBoolean(ACTION_CANCEL) == true) {
+            logger.i { "TimerService Canceled from Notification" }
             onCancelTimer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -112,6 +117,7 @@ class TimerService : Service() {
     }
 
     private fun updateProgress(millisUntilFinished: Long) {
+        logger.i { "TimerService updateProgress ${millisUntilFinished / 1000}" }
         coroutineScope.launch {
             _timerState.emit(
                 TimerStatusUpdate.Progress(
@@ -130,6 +136,7 @@ class TimerService : Service() {
     }
 
     private fun onTimerFinished() {
+        logger.i { "TimerService onTimerFinished" }
         coroutineScope.launch {
             notificationManager.notifyBoilingFinished(eggType)
             _timerState.emit(TimerStatusUpdate.Finished)
