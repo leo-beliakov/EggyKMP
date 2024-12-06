@@ -1,10 +1,12 @@
 package com.leoapps.eggy.di
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import com.leoapps.eggy.base.database.data.EggyDatabase
 import com.leoapps.eggy.base.startup.AppStartupInformationProvider
 import com.leoapps.eggy.base.startup.AppStartupInformationProviderImpl
 import com.leoapps.eggy.base.storage.ApplicationDirectoryProvider
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.logs.data.LogDao
 import com.leoapps.eggy.progress.data.TimerSettingsRepositoryImpl
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.root.presentation.RootViewModel
@@ -32,6 +34,7 @@ val sharedModule = module {
 
     factoryOf(::CalculateBoilingTimeUseCase)
     factoryOf(::TimerSettingsRepositoryImpl).bind(TimerSettingsRepository::class)
+    factory { get<EggyDatabase>().logDao() }.bind(LogDao::class)
 
     viewModelOf(::RootViewModel)
     viewModelOf(::BoilSetupViewModel)

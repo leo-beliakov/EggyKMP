@@ -11,6 +11,7 @@ import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
 import com.leoapps.eggy.common.utils.convertMsToTimerText
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.logs.data.LogDao
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
 import com.leoapps.eggy.timer.TimerManager
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -38,6 +40,7 @@ import kotlinx.coroutines.launch
 class BoilProgressViewModel(
     private val vibrationManager: VibrationManager,
     private val timerManager: TimerManager,
+    private val dao: LogDao,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -56,6 +59,19 @@ class BoilProgressViewModel(
     private var serviceSubscribtionJob: Job? = null
 
     init {
+        viewModelScope.launch {
+            println("Reading Logs")
+            val firstBunch = dao.getAllLogs().first()
+            println("Recieved Logs")
+            firstBunch.forEach {
+                println("Log: $it")
+            }
+            dao.getAllLogs()
+                .collect {
+                    val first = it.first()
+                    print("firstLog: $first")
+                }
+        }
         timerManager.timerUpdates
             .onEach { timerState ->
                 when (timerState) {
@@ -188,7 +204,7 @@ class BoilProgressViewModel(
     private fun requestNotificationsPermission() {
         viewModelScope.launch {
             try {
-                if(!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
+                if (!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
                     permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
                 }
 

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.common.utils.convertMsToTimerText
+import com.leoapps.eggy.logs.data.LogDao
+import com.leoapps.eggy.logs.data.model.LogEntity
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.model.BoilSetupUiEvent
 import com.leoapps.setup.presentation.model.BoilSetupUiState
@@ -20,10 +22,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 
 @Stable // https://issuetracker.google.com/issues/280284177
 class BoilSetupViewModel(
     private val calculateBoilingTime: CalculateBoilingTimeUseCase,
+    private val dao: LogDao,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BoilSetupUiState())
@@ -33,6 +37,16 @@ class BoilSetupViewModel(
     val events = _events.asSharedFlow()
 
     init {
+        viewModelScope.launch {
+            println("Saving Logs")
+            dao.saveLog(
+                LogEntity(
+                    tag = "BoilSetupViewModel",
+                    message = "created",
+                    timestamp = Clock.System.now().toEpochMilliseconds()
+                )
+            )
+        }
         state.distinctUntilChanged { old, new ->
             old.selectedTemperature == new.selectedTemperature &&
                     old.selectedSize == new.selectedSize &&
