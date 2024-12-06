@@ -215,6 +215,12 @@ class BoilProgressViewModel(
         }
     }
 
+    fun onDebugHiddenButtonClicked() {
+        viewModelScope.launch {
+            _events.emit(BoilProgressUiEvent.OpenLogs)
+        }
+    }
+
     private companion object {
         val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
     }

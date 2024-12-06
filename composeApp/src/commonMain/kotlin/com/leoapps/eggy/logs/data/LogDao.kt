@@ -18,6 +18,6 @@ interface LogDao {
     @Query("DELETE FROM logs")
     suspend fun clear()
 
-    @Query("SELECT * FROM logs ORDER BY timestamp ASC")
+    @Query("SELECT * FROM logs ORDER BY timestamp DESC")
     fun getAllLogs(): Flow<List<LogEntity>>
 }
