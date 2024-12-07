@@ -9,7 +9,8 @@ import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
-import com.leoapps.eggy.common.utils.convertMsToTimerText
+import com.leoapps.eggy.common.utils.TimeFormatPattern
+import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.logs.data.LogDao
 import com.leoapps.eggy.logs.domain.EggyLogger
@@ -31,7 +32,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -134,9 +134,10 @@ class BoilProgressViewModel(
     }
 
     private fun getInitialState(): BoilProgressUiState {
+        val formattedTime = boilingTime.toFormattedTime()
         return BoilProgressUiState(
-            progressText = convertMsToTimerText(boilingTime),
-            boilingTime = convertMsToTimerText(boilingTime),
+            progressText = formattedTime,
+            boilingTime = formattedTime,
             titleRes = when (eggType) {
                 EggBoilingType.SOFT -> Res.string.common_soft_boiled_eggs
                 EggBoilingType.MEDIUM -> Res.string.common_medium_boiled_eggs
@@ -149,7 +150,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(boilingTime),
+                progressText = boilingTime.toFormattedTime(),
                 buttonState = ActionButtonState.START
             )
         }
@@ -159,7 +160,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(boilingTime),
+                progressText = boilingTime.toFormattedTime(),
                 buttonState = ActionButtonState.START,
             )
         }
@@ -172,7 +173,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = timerState.timePassedMs / boilingTime.toFloat(),
-                progressText = convertMsToTimerText(boilingTime - timerState.timePassedMs),
+                progressText = (boilingTime - timerState.timePassedMs).toFormattedTime(),
                 buttonState = ActionButtonState.STOP
             )
         }

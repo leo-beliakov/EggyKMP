@@ -4,9 +4,7 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.common.utils.convertMsToTimerText
-import com.leoapps.eggy.logs.data.LogDao
-import com.leoapps.eggy.logs.data.model.LogEntity
+import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.model.BoilSetupUiEvent
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 @Stable // https://issuetracker.google.com/issues/280284177
 class BoilSetupViewModel(
@@ -53,7 +50,7 @@ class BoilSetupViewModel(
 
                 it.copy(
                     calculatedTime = time,
-                    calculatedTimeText = convertMsToTimerText(time),
+                    calculatedTimeText = time.toFormattedTime(),
                     nextButtonEnabled = it.selectedTemperature != null &&
                             it.selectedSize != null &&
                             it.selectedType != null

@@ -41,19 +41,14 @@ import androidx.compose.ui.unit.dp
 import com.leoapps.eggy.base.ui.theme.Amber300
 import com.leoapps.eggy.base.ui.theme.Black
 import com.leoapps.eggy.base.ui.theme.DeepOrange500
-import com.leoapps.eggy.base.ui.theme.GrayLight
 import com.leoapps.eggy.base.ui.theme.Grey400
 import com.leoapps.eggy.base.ui.theme.Red700
 import com.leoapps.eggy.base.ui.theme.White
+import com.leoapps.eggy.common.utils.TimeFormatPattern
+import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.logs.data.model.LogSeverity
 import com.leoapps.eggy.logs.domain.model.Log
 import com.leoapps.eggy.logs.presentation.model.LogsState
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.format.char
-import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -177,7 +172,7 @@ private fun LogsScreen(
 }
 
 @Composable
-fun LogItem(log: Log) {
+private fun LogItem(log: Log) {
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -194,7 +189,7 @@ fun LogItem(log: Log) {
             .padding(8.dp)
     ) {
         Text(
-            text = log.timestamp.toFormattedTime(),
+            text = log.timestamp.toFormattedTime(TimeFormatPattern.HH_MM_SS),
             style = MaterialTheme.typography.bodySmall,
             color = White,
             modifier = Modifier.padding(end = 8.dp)
@@ -221,18 +216,3 @@ private val LogSeverity.toColor: Color
         LogSeverity.WARN -> Red700
     }
 
-//todo reuse for boiling eggs
-private fun Long.toFormattedTime(): String {
-    val instant = Instant.fromEpochMilliseconds(this)
-    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-
-    return localDateTime.time.format(
-        LocalTime.Format {
-            hour()
-            char(':')
-            minute()
-            char(':')
-            second()
-        }
-    )
-}
