@@ -1,6 +1,8 @@
 package com.leoapps.progress.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -78,7 +80,8 @@ data class BoilProgressScreenDestination(
 @Composable
 fun BoilProgressScreen(
     viewModel: BoilProgressViewModel = koinViewModel(),
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onDebugButtonClicked: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -88,6 +91,8 @@ fun BoilProgressScreen(
             .also { viewModel.permissionsController = it }
     }
 
+    BindEffect(permissionController)
+
     BoilProgressScreen(
         state = state,
         onBackClicked = viewModel::onBackClicked,
@@ -96,19 +101,16 @@ fun BoilProgressScreen(
         onRationaleDialogConfirm = viewModel::onRationaleDialogConfirm,
         onGoToSettingsDialogConfirm = viewModel::onGoToSettingsDialogConfirm,
         onCancelationDialogDismissed = viewModel::onCancelationDialogDismissed,
+        onDebugHiddenButtonClicked = viewModel::onDebugHiddenButtonClicked,
     )
 
     CollectEventsWithLifecycle(viewModel.events) { event ->
         when (event) {
-            is BoilProgressUiEvent.NavigateBack -> onBackClicked()
-
-            is BoilProgressUiEvent.OpenNotificationsSettings -> {
-                permissionController.openAppSettings()
-            }
+            BoilProgressUiEvent.NavigateBack -> onBackClicked()
+            BoilProgressUiEvent.OpenLogs -> onDebugButtonClicked()
+            BoilProgressUiEvent.OpenNotificationsSettings -> permissionController.openAppSettings()
         }
     }
-
-    BindEffect(permissionController)
 }
 
 @Composable
@@ -116,6 +118,7 @@ fun BoilProgressScreen(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
+    onDebugHiddenButtonClicked: () -> Unit,
     onCancelationDialogConfirmed: () -> Unit,
     onRationaleDialogConfirm: () -> Unit,
     onGoToSettingsDialogConfirm: () -> Unit,
@@ -125,6 +128,7 @@ fun BoilProgressScreen(
         state = state,
         onBackClicked = onBackClicked,
         onButtonClicked = onButtonClicked,
+        onDebugHiddenButtonClicked = onDebugHiddenButtonClicked,
     )
 
     state.selectedDialog?.let { dialog ->
@@ -169,6 +173,7 @@ private fun BoilProgressContent(
     state: BoilProgressUiState,
     onBackClicked: () -> Unit,
     onButtonClicked: () -> Unit,
+    onDebugHiddenButtonClicked: () -> Unit,
 ) {
     val timerState = rememberTimerState()
 
@@ -195,6 +200,7 @@ private fun BoilProgressContent(
             Toolbar(
                 titleRes = state.titleRes,
                 onBackClicked = onBackClicked,
+                onDebugHiddenButtonClicked = onDebugHiddenButtonClicked,
             )
             TimerSection(
                 timerState = timerState
@@ -214,10 +220,12 @@ private fun BoilProgressContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Toolbar(
     titleRes: StringResource,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onDebugHiddenButtonClicked: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         IconButton(
@@ -242,6 +250,15 @@ private fun Toolbar(
                 // reserves the size of the icon button
                 // to prevent overlapping:
                 .padding(horizontal = MaterialTheme.dimens.minimumInteractiveComponentSize)
+        )
+        Spacer(
+            modifier = Modifier
+                .size(MaterialTheme.dimens.minimumInteractiveComponentSize)
+                .align(Alignment.CenterEnd)
+                .combinedClickable(
+                    onLongClick = onDebugHiddenButtonClicked,
+                    onClick = {}
+                )
         )
     }
 }

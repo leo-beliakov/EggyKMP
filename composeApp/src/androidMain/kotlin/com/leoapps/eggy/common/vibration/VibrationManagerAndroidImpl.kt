@@ -30,12 +30,16 @@ class VibrationManagerAndroidImpl(
         vibrator.vibrate(effect)
     }
 
-    override fun vibratePattern(pattern: LongArray) {
+    override fun vibrateCelebration() {
         vibrator.vibrate(
             VibrationEffect.createWaveform(
-                pattern,
+                TIMER_FINISH_VIBRARTION_PATTERN,
                 -1 // means no repeat
             )
         )
+    }
+
+    private companion object {
+        val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
     }
 }

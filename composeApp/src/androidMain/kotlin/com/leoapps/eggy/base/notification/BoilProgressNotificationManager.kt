@@ -17,7 +17,8 @@ import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.MainActivity
 import com.leoapps.eggy.MainActivity.Companion.IS_LAUNCHED_FROM_NOTIFICATION_KEY
 import com.leoapps.eggy.R
-import com.leoapps.eggy.common.utils.convertMsToText
+import com.leoapps.eggy.common.utils.TimeFormatPattern
+import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.timer.TimerService
 
 class BoilProgressNotificationManager(
@@ -126,7 +127,7 @@ class BoilProgressNotificationManager(
 
     private fun getNotificationMessage(timeLeft: Long) = context.getString(
         R.string.notification_progress_message,
-        convertMsToText(timeLeft)
+        timeLeft.toFormattedTime( TimeFormatPattern.MM_Min_SS_Sec)
     )
 
     private fun getNotificationTitle(eggType: EggBoilingType) = when (eggType) {

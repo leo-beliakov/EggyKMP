@@ -19,7 +19,3 @@ struct iOSApp: App {
         }
     }
 }
-
-#Preview {
-    ContentView()
-}

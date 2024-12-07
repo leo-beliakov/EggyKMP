@@ -4,13 +4,14 @@ import androidx.navigation.NavController
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.eggy.root.presentation.BoilProgressScreenDestination
 import com.leoapps.eggy.root.presentation.BoilSetupScreenDestination
+import com.leoapps.eggy.root.presentation.LogsScreenDestination
 import com.leoapps.eggy.root.presentation.WelcomeScreenDestination
 
 class RootNavigator(
     private val navController: NavController,
 ) {
     fun openSetupScreen() {
-        navController.navigate(BoilSetupScreenDestination){
+        navController.navigate(BoilSetupScreenDestination) {
             popUpTo<WelcomeScreenDestination> {
                 inclusive = true
             }
@@ -39,5 +40,9 @@ class RootNavigator(
 
     fun navigateBack() {
         navController.navigateUp()
+    }
+
+    fun openLogsScreen() {
+        navController.navigate(LogsScreenDestination)
     }
 }

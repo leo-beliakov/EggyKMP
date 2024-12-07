@@ -18,7 +18,7 @@ class VibrationManagerIosImpl : VibrationManager {
         impactFeedbackGenerator.impactOccurred()
     }
 
-    override fun vibratePattern(pattern: LongArray) {
+    override fun vibrateCelebration() {
         notificationFeedbackGenerator.prepare()
         notificationFeedbackGenerator.notificationOccurred(UINotificationFeedbackType.UINotificationFeedbackTypeError)
     }

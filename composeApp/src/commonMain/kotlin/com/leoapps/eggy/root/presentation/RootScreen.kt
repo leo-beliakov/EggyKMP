@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.leoapps.base_ui.utils.CollectEventsWithLifecycle
+import com.leoapps.eggy.logs.presentation.LogsScreen
 import com.leoapps.eggy.root.navigation.RootNavigator
 import com.leoapps.eggy.root.presentation.model.RootNavigationCommand
 import com.leoapps.eggy.welcome.presentation.BoilSetupScreen
@@ -26,6 +27,9 @@ object WelcomeScreenDestination
 
 @Serializable
 object BoilSetupScreenDestination
+
+@Serializable
+object LogsScreenDestination
 
 @Serializable
 data class BoilProgressScreenDestination(
@@ -106,7 +110,13 @@ private fun RootScreen(
             }
         ) { backStackEntry ->
             BoilProgressScreen(
-                onBackClicked = navigator::navigateBack
+                onBackClicked = navigator::navigateBack,
+                onDebugButtonClicked = navigator::openLogsScreen,
+            )
+        }
+        composable<LogsScreenDestination> {
+            LogsScreen(
+                onBackClicked = navigator::navigateBack,
             )
         }
     }

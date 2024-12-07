@@ -9,13 +9,16 @@ import android.os.IBinder
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.progress.domain.model.TimerSettings
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
@@ -25,6 +28,7 @@ import kotlin.time.toDuration
 class TimerManagerAndroidImpl(
     private val context: Context,
     private val timerSettingsRepository: TimerSettingsRepository,
+    private val logger: EggyLogger,
 ) : TimerManager {
 
     private val coroutineScope = CoroutineScope(Job())
@@ -42,10 +46,13 @@ class TimerManagerAndroidImpl(
         eggTemperature: EggTemperature,
         boilingTime: Long,
     ) {
+        logger.d { "TimerManager startTimer called" }
+
         context.bindService(
             Intent(context, TimerService::class.java),
             object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    logger.d { "TimerManager onServiceConnected" }
                     binder = service as? TimerService.TimerBinder
                     binder?.startTimer(boilingTime, eggType)
                     binder?.timerState?.onEach { update ->
@@ -54,6 +61,7 @@ class TimerManagerAndroidImpl(
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
+                    logger.d { "TimerManager onServiceDisconnected" }
                     binder = null
                 }
             },
@@ -62,8 +70,8 @@ class TimerManagerAndroidImpl(
     }
 
     override fun cancelTimer() {
+        logger.d { "TimerManager cancelTimer called" }
         binder?.stopTimer()
-//        coroutineScope.cancel() //todo double-check
     }
 
     // In Android we don't need to handle the following methods

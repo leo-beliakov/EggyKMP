@@ -4,7 +4,8 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.leoapps.base.egg.domain.model.EggBoilingType
-import com.leoapps.eggy.common.utils.convertMsToTimerText
+import com.leoapps.eggy.common.utils.toFormattedTime
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.model.BoilSetupUiEvent
 import com.leoapps.setup.presentation.model.BoilSetupUiState
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 @Stable // https://issuetracker.google.com/issues/280284177
 class BoilSetupViewModel(
     private val calculateBoilingTime: CalculateBoilingTimeUseCase,
+    private val logger: EggyLogger,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BoilSetupUiState())
@@ -33,6 +35,7 @@ class BoilSetupViewModel(
     val events = _events.asSharedFlow()
 
     init {
+        logger.d { "BoilSetupViewModel init" }
         state.distinctUntilChanged { old, new ->
             old.selectedTemperature == new.selectedTemperature &&
                     old.selectedSize == new.selectedSize &&
@@ -47,7 +50,7 @@ class BoilSetupViewModel(
 
                 it.copy(
                     calculatedTime = time,
-                    calculatedTimeText = convertMsToTimerText(time),
+                    calculatedTimeText = time.toFormattedTime(),
                     nextButtonEnabled = it.selectedTemperature != null &&
                             it.selectedSize != null &&
                             it.selectedType != null

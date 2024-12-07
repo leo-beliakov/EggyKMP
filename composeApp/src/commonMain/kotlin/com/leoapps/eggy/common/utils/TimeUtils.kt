@@ -1,25 +1,59 @@
 package com.leoapps.eggy.common.utils
 
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
+
 const val EMPTY_CALCULATED_TIME = "00:00"
 
-private const val MILLIS_IN_SECOND = 1000
-private const val SECONDS_IN_MINUTE = 60
-private const val MINUTES_IN_HOUR = 60
-private const val TIME_FORMAT = "%02d:%02d"
-
-fun convertMsToTimerText(ms: Long): String {
-    val totalSeconds = ms / MILLIS_IN_SECOND
-    val minutes = (totalSeconds / SECONDS_IN_MINUTE) % MINUTES_IN_HOUR
-    val seconds = totalSeconds % SECONDS_IN_MINUTE
-    val formattedMinutes = minutes.toString().padStart(2, '0')
-    val formattedSeconds = seconds.toString().padStart(2, '0')
-
-    return "$formattedMinutes:$formattedSeconds"
+enum class TimeFormatPattern {
+    HH_MM_SS,
+    MM_SS,
+    MM_Min_SS_Sec,
 }
 
-fun convertMsToText(ms: Long): String {
-    val seconds = ms / MILLIS_IN_SECOND
-    val minutes = seconds / SECONDS_IN_MINUTE
-    val remainingSeconds = seconds % SECONDS_IN_MINUTE
-    return "$minutes min $remainingSeconds sec" //todo use resources
+fun Long.toFormattedTime(
+    pattern: TimeFormatPattern = TimeFormatPattern.MM_SS
+): String {
+    val instant = Instant.fromEpochMilliseconds(this)
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    return when (pattern) {
+        TimeFormatPattern.HH_MM_SS -> {
+            localDateTime.time.format(
+                LocalTime.Format {
+                    hour()
+                    char(':')
+                    minute()
+                    char(':')
+                    second()
+                }
+            )
+        }
+
+        TimeFormatPattern.MM_SS -> {
+            localDateTime.time.format(
+                LocalTime.Format {
+                    minute()
+                    char(':')
+                    second()
+                }
+            )
+        }
+
+        TimeFormatPattern.MM_Min_SS_Sec -> {
+            localDateTime.time.format(
+                LocalTime.Format {
+                    minute(padding = Padding.NONE)
+                    chars(" min ")
+                    second(padding = Padding.NONE)
+                    chars(" sec")
+                }
+            )
+        }
+    }
 }

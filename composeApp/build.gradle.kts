@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -66,7 +68,7 @@ kotlin {
             implementation(libs.moko.permissions.compose)
 
             //Logging
-            implementation(libs.kotlin.logging)
+            implementation(libs.kermit.logger)
 
             //Data Store
             implementation(libs.datastore)
@@ -74,6 +76,10 @@ kotlin {
 
             //Date-Time
             implementation(libs.kotlinx.datetime)
+
+            //Room
+            implementation(libs.room.runtime)
+            implementation(libs.room.sqlite.bundled)
         }
     }
 }
@@ -105,7 +111,12 @@ android {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
+    ksp(libs.room.compiler)
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.ui.android)
     debugImplementation(compose.uiTooling)

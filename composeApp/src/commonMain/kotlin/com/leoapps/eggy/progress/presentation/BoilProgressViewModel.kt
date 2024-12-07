@@ -9,8 +9,10 @@ import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
-import com.leoapps.eggy.common.utils.convertMsToTimerText
+import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.logs.data.LogDao
+import com.leoapps.eggy.logs.domain.EggyLogger
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import com.leoapps.eggy.setup.presentation.model.BoilProgressUiState
 import com.leoapps.eggy.timer.TimerManager
@@ -38,6 +40,8 @@ import kotlinx.coroutines.launch
 class BoilProgressViewModel(
     private val vibrationManager: VibrationManager,
     private val timerManager: TimerManager,
+    private val dao: LogDao,
+    private val logger: EggyLogger,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -56,8 +60,10 @@ class BoilProgressViewModel(
     private var serviceSubscribtionJob: Job? = null
 
     init {
+        logger.d { "BoilProgressViewModel init" }
         timerManager.timerUpdates
             .onEach { timerState ->
+                logger.d { "BoilProgressViewModel timerUpdates ${timerState::class.simpleName}" }
                 when (timerState) {
                     TimerStatusUpdate.Canceled -> onTimerCanceled()
                     TimerStatusUpdate.Finished -> onTimerFinished()
@@ -127,9 +133,10 @@ class BoilProgressViewModel(
     }
 
     private fun getInitialState(): BoilProgressUiState {
+        val formattedTime = boilingTime.toFormattedTime()
         return BoilProgressUiState(
-            progressText = convertMsToTimerText(boilingTime),
-            boilingTime = convertMsToTimerText(boilingTime),
+            progressText = formattedTime,
+            boilingTime = formattedTime,
             titleRes = when (eggType) {
                 EggBoilingType.SOFT -> Res.string.common_soft_boiled_eggs
                 EggBoilingType.MEDIUM -> Res.string.common_medium_boiled_eggs
@@ -142,7 +149,7 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(boilingTime),
+                progressText = boilingTime.toFormattedTime(),
                 buttonState = ActionButtonState.START
             )
         }
@@ -152,20 +159,18 @@ class BoilProgressViewModel(
         _state.update {
             it.copy(
                 progress = 0f,
-                progressText = convertMsToTimerText(boilingTime),
+                progressText = boilingTime.toFormattedTime(),
                 buttonState = ActionButtonState.START,
             )
         }
-        vibrationManager.vibratePattern(
-            pattern = TIMER_FINISH_VIBRARTION_PATTERN
-        )
+        vibrationManager.vibrateCelebration()
     }
 
     private fun onTimerProgressUpdate(timerState: TimerStatusUpdate.Progress) {
         _state.update {
             it.copy(
                 progress = timerState.timePassedMs / boilingTime.toFloat(),
-                progressText = convertMsToTimerText(boilingTime - timerState.timePassedMs),
+                progressText = (boilingTime - timerState.timePassedMs).toFormattedTime(),
                 buttonState = ActionButtonState.STOP
             )
         }
@@ -188,7 +193,7 @@ class BoilProgressViewModel(
     private fun requestNotificationsPermission() {
         viewModelScope.launch {
             try {
-                if(!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
+                if (!permissionsController.isPermissionGranted(Permission.REMOTE_NOTIFICATION)) {
                     permissionsController.providePermission(Permission.REMOTE_NOTIFICATION)
                 }
 
@@ -208,7 +213,9 @@ class BoilProgressViewModel(
         }
     }
 
-    private companion object {
-        val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
+    fun onDebugHiddenButtonClicked() {
+        viewModelScope.launch {
+            _events.emit(BoilProgressUiEvent.OpenLogs)
+        }
     }
 }
