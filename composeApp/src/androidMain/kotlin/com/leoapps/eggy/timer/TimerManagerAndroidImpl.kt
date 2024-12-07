@@ -15,8 +15,10 @@ import com.leoapps.eggy.progress.domain.model.TimerSettings
 import com.leoapps.eggy.progress.domain.model.TimerStatusUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
@@ -70,7 +72,6 @@ class TimerManagerAndroidImpl(
     override fun cancelTimer() {
         logger.d { "TimerManager cancelTimer called" }
         binder?.stopTimer()
-//        coroutineScope.cancel() //todo double-check
     }
 
     // In Android we don't need to handle the following methods

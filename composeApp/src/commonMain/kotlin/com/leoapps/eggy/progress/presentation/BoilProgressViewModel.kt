@@ -9,7 +9,6 @@ import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
 import com.leoapps.eggy.common.permissions.model.PermissionStatus
-import com.leoapps.eggy.common.utils.TimeFormatPattern
 import com.leoapps.eggy.common.utils.toFormattedTime
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
 import com.leoapps.eggy.logs.data.LogDao
@@ -164,9 +163,7 @@ class BoilProgressViewModel(
                 buttonState = ActionButtonState.START,
             )
         }
-        vibrationManager.vibratePattern(
-            pattern = TIMER_FINISH_VIBRARTION_PATTERN
-        )
+        vibrationManager.vibrateCelebration()
     }
 
     private fun onTimerProgressUpdate(timerState: TimerStatusUpdate.Progress) {
@@ -220,9 +217,5 @@ class BoilProgressViewModel(
         viewModelScope.launch {
             _events.emit(BoilProgressUiEvent.OpenLogs)
         }
-    }
-
-    private companion object {
-        val TIMER_FINISH_VIBRARTION_PATTERN = longArrayOf(0, 200, 100, 300, 400, 500)
     }
 }
