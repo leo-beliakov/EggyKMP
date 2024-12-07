@@ -8,7 +8,11 @@ class LiveActivityManagerImpl: NSObject, LiveActivityManager {
         return !Activity<EggTimerActivityAttributes>.activities.isEmpty
     }
 
-    func startLiveActivity(boilingTime: Int64) {
+    func startLiveActivity(
+        boilingTime: Int64,
+        type: EggBoilingType
+    ) {
+        
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             print("Live Activities are disabled.")
             return
@@ -18,7 +22,8 @@ class LiveActivityManagerImpl: NSObject, LiveActivityManager {
         let attributes = EggTimerActivityAttributes(name: "Egg Timer")
         let contentState = EggTimerActivityAttributes.ContentState(
             startTime: Date(),
-            endTime: Date().addingTimeInterval(duration)
+            endTime: Date().addingTimeInterval(duration),
+            eggType: EggType(from: type)
         )
 
         let initialContent = ActivityContent(
