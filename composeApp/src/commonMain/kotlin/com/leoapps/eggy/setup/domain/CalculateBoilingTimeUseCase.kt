@@ -3,16 +3,23 @@ package com.leoapps.setup.domain
 import com.leoapps.base.egg.domain.model.EggBoilingType
 import com.leoapps.base.egg.domain.model.EggSize
 import com.leoapps.base.egg.domain.model.EggTemperature
+import com.leoapps.eggy.setup.domain.TimeCalculationSettingsRepository
 
-class CalculateBoilingTimeUseCase {
+class CalculateBoilingTimeUseCase(
+    private val settingsRepository: TimeCalculationSettingsRepository
+) {
 
-    operator fun invoke(
+    operator suspend fun invoke(
         temperature: EggTemperature?,
         size: EggSize?,
         type: EggBoilingType?,
     ): Long {
         return if (temperature != null && size != null && type != null) {
-            calculateBoilingTime(temperature, size, type)
+            if (settingsRepository.shouldUseFakeTime()) {
+                25_000L
+            } else {
+                calculateBoilingTime(temperature, size, type)
+            }
         } else {
             0L
         }

@@ -14,6 +14,8 @@ import com.leoapps.eggy.logs.presentation.LogsViewModel
 import com.leoapps.eggy.progress.data.TimerSettingsRepositoryImpl
 import com.leoapps.eggy.progress.domain.TimerSettingsRepository
 import com.leoapps.eggy.root.presentation.RootViewModel
+import com.leoapps.eggy.setup.data.TimeCalculationSettingsRepositoryImpl
+import com.leoapps.eggy.setup.domain.TimeCalculationSettingsRepository
 import com.leoapps.progress.presentation.BoilProgressViewModel
 import com.leoapps.setup.domain.CalculateBoilingTimeUseCase
 import com.leoapps.setup.presentation.BoilSetupViewModel
@@ -38,6 +40,7 @@ val sharedModule = module {
 
     factoryOf(::CalculateBoilingTimeUseCase)
     factoryOf(::TimerSettingsRepositoryImpl).bind(TimerSettingsRepository::class)
+    factoryOf(::TimeCalculationSettingsRepositoryImpl).bind(TimeCalculationSettingsRepository::class)
     factoryOf(::LogsRepositoryImpl).bind(LogsRepository::class)
     factory { get<EggyDatabase>().logDao() }.bind(LogDao::class)
     factoryOf(::LogDatabaseWriter)

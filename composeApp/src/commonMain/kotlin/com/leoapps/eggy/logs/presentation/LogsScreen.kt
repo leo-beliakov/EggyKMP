@@ -101,7 +101,10 @@ private fun LogsScreen(
                 },
                 actions = {
                     IconButton(onClick = { menuExpanded = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Menu")
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = "Menu"
+                        )
                     }
                     DropdownMenu(
                         expanded = menuExpanded,
@@ -131,13 +134,10 @@ private fun LogsScreen(
                                         onCheckedChange = null
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("FakeTimer")
+                                    Text("Fake Timer")
                                 }
                             },
-                            onClick = {
-                                menuExpanded = false
-                                onFakeTimerToggle()
-                            }
+                            onClick = onFakeTimerToggle
                         )
                     }
                 }

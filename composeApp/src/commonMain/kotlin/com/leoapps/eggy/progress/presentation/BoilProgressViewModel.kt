@@ -64,7 +64,7 @@ class BoilProgressViewModel(
         logger.d { "BoilProgressViewModel init" }
         timerManager.timerUpdates
             .onEach { timerState ->
-                logger.d { "BoilProgressViewModel timerUpdates $timerState" }
+                logger.d { "BoilProgressViewModel timerUpdates ${timerState::class.simpleName}" }
                 when (timerState) {
                     TimerStatusUpdate.Canceled -> onTimerCanceled()
                     TimerStatusUpdate.Finished -> onTimerFinished()
