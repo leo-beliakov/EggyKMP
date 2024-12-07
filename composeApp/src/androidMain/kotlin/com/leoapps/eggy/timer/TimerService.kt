@@ -45,19 +45,19 @@ class TimerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        logger.i { "TimerService onCreate" }
+        logger.d { "TimerService onCreate" }
         isRunning = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        logger.i { "TimerService onDestroy" }
+        logger.d { "TimerService onDestroy" }
         isRunning = false
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.extras?.getBoolean(ACTION_CANCEL) == true) {
-            logger.i { "TimerService Canceled from Notification" }
+            logger.d { "TimerService Canceled from Notification" }
             onCancelTimer()
         }
         return super.onStartCommand(intent, flags, startId)
@@ -117,7 +117,7 @@ class TimerService : Service() {
     }
 
     private fun updateProgress(millisUntilFinished: Long) {
-        logger.i { "TimerService updateProgress ${millisUntilFinished / 1000}" }
+        logger.d { "TimerService updateProgress ${millisUntilFinished / 1000}" }
         coroutineScope.launch {
             _timerState.emit(
                 TimerStatusUpdate.Progress(
@@ -136,7 +136,7 @@ class TimerService : Service() {
     }
 
     private fun onTimerFinished() {
-        logger.i { "TimerService onTimerFinished" }
+        logger.d { "TimerService onTimerFinished" }
         coroutineScope.launch {
             notificationManager.notifyBoilingFinished(eggType)
             _timerState.emit(TimerStatusUpdate.Finished)

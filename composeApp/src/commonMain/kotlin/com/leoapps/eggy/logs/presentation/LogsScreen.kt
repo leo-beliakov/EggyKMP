@@ -38,12 +38,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.leoapps.eggy.base.ui.theme.Amber300
+import com.leoapps.eggy.base.ui.theme.Black
+import com.leoapps.eggy.base.ui.theme.DeepOrange500
 import com.leoapps.eggy.base.ui.theme.GrayLight
+import com.leoapps.eggy.base.ui.theme.Grey400
+import com.leoapps.eggy.base.ui.theme.Red700
+import com.leoapps.eggy.base.ui.theme.White
 import com.leoapps.eggy.logs.data.model.LogSeverity
 import com.leoapps.eggy.logs.domain.model.Log
 import com.leoapps.eggy.logs.presentation.model.LogsState
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -169,17 +178,6 @@ private fun LogsScreen(
 
 @Composable
 fun LogItem(log: Log) {
-    val severityColor = when (log.severity) {
-        LogSeverity.VERBOSE,
-        LogSeverity.DEBUG,
-        LogSeverity.INFO -> Color.Gray
-
-        LogSeverity.ERROR,
-        LogSeverity.ASSERT -> Color.Red
-
-        LogSeverity.WARN -> Color.Yellow
-    }
-
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -192,29 +190,49 @@ fun LogItem(log: Log) {
                 max = if (expanded) Dp.Unspecified else 70.dp
             )
             .clickable { expanded = !expanded }
-            .background(severityColor.copy(alpha = 0.1f))
+            .background(log.severity.toColor)
             .padding(8.dp)
     ) {
         Text(
             text = log.timestamp.toFormattedTime(),
             style = MaterialTheme.typography.bodySmall,
+            color = White,
             modifier = Modifier.padding(end = 8.dp)
         )
         Text(
             text = log.message,
             style = MaterialTheme.typography.bodySmall,
-            color = GrayLight,
+            color = Black,
             modifier = Modifier.weight(1f)
         )
     }
 }
 
-//todo use date-time library functions?
-fun Long.toFormattedTime(): String {
+private val LogSeverity.toColor: Color
+    get() = when (this) {
+        LogSeverity.VERBOSE,
+        LogSeverity.DEBUG -> Grey400
+
+        LogSeverity.INFO -> Amber300
+
+        LogSeverity.ERROR,
+        LogSeverity.ASSERT -> DeepOrange500
+
+        LogSeverity.WARN -> Red700
+    }
+
+//todo reuse for boiling eggs
+private fun Long.toFormattedTime(): String {
     val instant = Instant.fromEpochMilliseconds(this)
     val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    val time = localDateTime.time
-    return "${time.hour.toString().padStart(2, '0')}:${
-        time.minute.toString().padStart(2, '0')
-    }:${time.second.toString().padStart(2, '0')}"
+
+    return localDateTime.time.format(
+        LocalTime.Format {
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
+        }
+    )
 }

@@ -23,12 +23,13 @@ class LogDatabaseWriter(
         tag: String,
         throwable: Throwable?
     ) {
+        val timeStamp = Clock.System.now().toEpochMilliseconds()
         coroutineScope.launch {
             logsRepository.addLog(
                 Log(
                     tag = tag,
                     message = message,
-                    timestamp = Clock.System.now().toEpochMilliseconds(),
+                    timestamp = timeStamp,
                     severity = severity.mapToLogSeverity()
                 )
             )

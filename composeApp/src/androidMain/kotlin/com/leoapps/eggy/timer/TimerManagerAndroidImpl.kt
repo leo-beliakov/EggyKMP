@@ -44,13 +44,13 @@ class TimerManagerAndroidImpl(
         eggTemperature: EggTemperature,
         boilingTime: Long,
     ) {
-        logger.i { "TimerManager startTimer called" }
+        logger.d { "TimerManager startTimer called" }
 
         context.bindService(
             Intent(context, TimerService::class.java),
             object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                    logger.i { "TimerManager onServiceConnected" }
+                    logger.d { "TimerManager onServiceConnected" }
                     binder = service as? TimerService.TimerBinder
                     binder?.startTimer(boilingTime, eggType)
                     binder?.timerState?.onEach { update ->
@@ -59,7 +59,7 @@ class TimerManagerAndroidImpl(
                 }
 
                 override fun onServiceDisconnected(name: ComponentName?) {
-                    logger.i { "TimerManager onServiceDisconnected" }
+                    logger.d { "TimerManager onServiceDisconnected" }
                     binder = null
                 }
             },
@@ -68,7 +68,7 @@ class TimerManagerAndroidImpl(
     }
 
     override fun cancelTimer() {
-        logger.i { "TimerManager cancelTimer called" }
+        logger.d { "TimerManager cancelTimer called" }
         binder?.stopTimer()
 //        coroutineScope.cancel() //todo double-check
     }

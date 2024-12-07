@@ -13,7 +13,7 @@ import com.leoapps.eggy.logs.data.model.LogEntity
     exportSchema = true,
 )
 @ConstructedBy(MyDatabaseConstructor::class)
-abstract  class EggyDatabase : RoomDatabase() {
+abstract class EggyDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
 
     companion object {

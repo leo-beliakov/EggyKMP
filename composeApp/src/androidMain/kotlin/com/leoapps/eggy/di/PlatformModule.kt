@@ -10,6 +10,7 @@ import com.leoapps.eggy.base.storage.ApplicationDirectoryProvider
 import com.leoapps.eggy.base.storage.ApplicationDirectoryProviderAndroidImpl
 import com.leoapps.eggy.common.vibration.VibrationManagerAndroidImpl
 import com.leoapps.eggy.common.vibration.domain.VibrationManager
+import com.leoapps.eggy.logs.AppLifecycleLogger
 import com.leoapps.eggy.timer.TimerManager
 import com.leoapps.eggy.timer.TimerManagerAndroidImpl
 import org.koin.core.module.dsl.factoryOf
@@ -23,6 +24,7 @@ val platformModule = module {
 
     factoryOf(::BoilProgressNotificationManager).bind(NotificationChannelsManager::class)
     factoryOf(::ApplicationDirectoryProviderAndroidImpl).bind(ApplicationDirectoryProvider::class)
+    factoryOf(::AppLifecycleLogger)
 
     // Database region
     single {

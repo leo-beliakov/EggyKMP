@@ -24,3 +24,8 @@ val PrimaryWithAlpha = Color(0xA0E69268)
 val PrimaryLight = Color(0xFFE8A480)
 val PrimaryAlmostWhite = Color(0xFFFFF4EF)
 val AlmostWhite = Color(0xFFF0F0F0)
+
+val Red700 = Color(0xFFD32F2F)
+val DeepOrange500 = Color(0xFFFF5722)
+val Amber300 = Color(0xFFFFD54F)
+val Grey400 = Color(0xFFBDBDBD)

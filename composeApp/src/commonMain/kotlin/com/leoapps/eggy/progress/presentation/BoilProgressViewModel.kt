@@ -61,10 +61,10 @@ class BoilProgressViewModel(
     private var serviceSubscribtionJob: Job? = null
 
     init {
-        logger.i { "BoilProgressViewModel init" }
+        logger.d { "BoilProgressViewModel init" }
         timerManager.timerUpdates
             .onEach { timerState ->
-                logger.i { "BoilProgressViewModel timerUpdates $timerState" }
+                logger.d { "BoilProgressViewModel timerUpdates $timerState" }
                 when (timerState) {
                     TimerStatusUpdate.Canceled -> onTimerCanceled()
                     TimerStatusUpdate.Finished -> onTimerFinished()

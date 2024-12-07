@@ -38,7 +38,7 @@ class BoilSetupViewModel(
     val events = _events.asSharedFlow()
 
     init {
-        logger.i { "BoilSetupViewModel init" }
+        logger.d { "BoilSetupViewModel init" }
         state.distinctUntilChanged { old, new ->
             old.selectedTemperature == new.selectedTemperature &&
                     old.selectedSize == new.selectedSize &&

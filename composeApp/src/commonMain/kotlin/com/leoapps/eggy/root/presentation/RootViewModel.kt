@@ -22,11 +22,11 @@ class RootViewModel(
     val navCommands = _navCommands.receiveAsFlow()
 
     init {
-        logger.i { "RootViewModel init" }
+        logger.d { "RootViewModel init" }
         viewModelScope.launch {
             when {
                 timerManager.isTimerScheduled() -> {
-                    logger.i { "RootViewModel onAppRelaunched" }
+                    logger.d { "RootViewModel onAppRelaunched" }
                     timerManager.onAppRelaunched()
 
                     val timerSettings = timerSettingsRepository.getTimerSettings() ?: return@launch
@@ -39,13 +39,13 @@ class RootViewModel(
                 }
 
                 appStartupInformationProvider.isLaunchedFromNotification -> {
-                    logger.i { "RootViewModel onAppLaunchedFromNotification" }
+                    logger.d { "RootViewModel onAppLaunchedFromNotification" }
                     timerManager.onAppLaunchedFromNotification()
                     _navCommands.send(RootNavigationCommand.OpenSetupScreen)
                 }
 
                 else -> {
-                    logger.i { "RootViewModel onAppLaunched" }
+                    logger.d { "RootViewModel onAppLaunched" }
                     timerManager.onAppLaunched()
                 }
             }

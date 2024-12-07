@@ -2,6 +2,7 @@ package com.leoapps.eggy.di
 
 import com.leoapps.eggy.timer.LiveActivityManager
 import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ObjCClass
 import kotlinx.cinterop.ObjCProtocol
 import kotlinx.cinterop.getOriginalKotlinClass
 import org.koin.core.Koin
@@ -27,6 +28,12 @@ object KoinIosHelper {
     @OptIn(BetaInteropApi::class)
     fun get(objCProtocol: ObjCProtocol): Any {
         val kClazz = getOriginalKotlinClass(objCProtocol)!!
+        return koin.get(kClazz, null, null)
+    }
+
+    @OptIn(BetaInteropApi::class)
+    fun get(objCClass: ObjCClass): Any {
+        val kClazz = getOriginalKotlinClass(objCClass)!!
         return koin.get(kClazz, null, null)
     }
 }
