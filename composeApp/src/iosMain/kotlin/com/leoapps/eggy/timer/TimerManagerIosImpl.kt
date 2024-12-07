@@ -75,6 +75,7 @@ class TimerManagerIosImpl(
         startTimer(
             boilingTime = boilingTime,
             timerOffset = 0,
+            eggType = eggType,
         )
     }
 
@@ -86,6 +87,7 @@ class TimerManagerIosImpl(
             startTimer(
                 boilingTime = timerSettings.timerTotalTime,
                 timerOffset = timerOffset,
+                eggType = timerSettings.eggType,
             )
         }
     }
@@ -107,6 +109,7 @@ class TimerManagerIosImpl(
     private fun startTimer(
         boilingTime: Long,
         timerOffset: Long,
+        eggType: EggBoilingType,
     ) {
         val remainingTime = boilingTime - timerOffset
 
@@ -134,7 +137,7 @@ class TimerManagerIosImpl(
         )
 
         timer?.start()
-        liveActivityManager.startLiveActivity(remainingTime)
+        liveActivityManager.startLiveActivity(remainingTime, eggType)
         notificationsManager.scheduleCompleteNotification(remainingTime)
     }
 

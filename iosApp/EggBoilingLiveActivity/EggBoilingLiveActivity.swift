@@ -17,10 +17,23 @@ struct EggBoilingLiveActivity: Widget {
             DynamicIsland {
                 // Expanded Dynamic Island view
                 DynamicIslandExpandedRegion(.center) {
-                    VStack(spacing: 4) {  // Reduce spacing
-                        Text("Egg Timer")
-                            .font(.headline)
-                            .multilineTextAlignment(.center)
+                    HStack(spacing: 8) {
+                        Image(context.state.eggImageName)  // Dynamic egg image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 40)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Egg Timer")
+                                .font(.headline)
+                                .multilineTextAlignment(.center)
+
+                            Text(
+                                "Boiling \(context.state.eggType)-boiled eggs"
+                            )
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        }
                         Text(
                             timerInterval: context.state
                                 .startTime...context.state.endTime,
@@ -28,19 +41,17 @@ struct EggBoilingLiveActivity: Widget {
                         )
                         .font(.largeTitle)
                         .bold()
-                        .multilineTextAlignment(.center)
+                        .monospacedDigit()
+                        .frame(width: 90)
+                        .multilineTextAlignment(.trailing)
                     }
                 }
-                DynamicIslandExpandedRegion(.bottom) {
-                    Text("Your eggs will be ready soon!")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
             } compactLeading: {
-                // Compact leading label
-                Text("Egg")
-                    .font(.caption)
-                    .bold()
+                // Compact leading icon
+                Image(context.state.eggImageName)  // Dynamic egg image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
             } compactTrailing: {
                 // Compact trailing timer
                 // https://stackoverflow.com/questions/66210592/widgetkit-timer-text-style-expands-it-to-fill-the-width-instead-of-taking-spa/76861806#76861806
@@ -67,21 +78,36 @@ struct LockScreenTimerView: View {
     let state: EggTimerActivityAttributes.ContentState
 
     var body: some View {
-        VStack(spacing: 8) {  // Adjust spacing for a clean look
-            Text("Egg Timer")
-                .font(.headline)
-                .bold()
-                .multilineTextAlignment(.center)
+        HStack(alignment: .center, spacing: 16) {
+            // Egg Image on the Left
+            Image(state.eggImageName)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 100)
+                .frame(width: 100)
 
-            Text(
-                timerInterval: state.startTime...state.endTime, countsDown: true
-            )
-            .font(.largeTitle)
-            .bold()
-            .monospacedDigit()  // Ensures numbers are evenly spaced
-            .multilineTextAlignment(.center)
+            // Text Section on the right
+            VStack(alignment: .center, spacing: 4) {
+                Text("Egg Timer")
+                    .font(.headline)
+                    .bold()
+
+                Text("Boiling \(state.eggType.rawValue)-boiled eggs")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .layoutPriority(1)
+
+                Text(
+                    timerInterval: state.startTime...state.endTime,
+                    countsDown: true
+                )
+                .font(.largeTitle)
+                .bold()
+                .monospacedDigit()
+                .multilineTextAlignment(.center)
+            }.frame(maxWidth: .infinity)
         }
         .padding()
-        .frame(maxWidth: .infinity)  // Ensures alignment in Lock Screen widgets
+        .frame(maxWidth: .infinity)
     }
 }
